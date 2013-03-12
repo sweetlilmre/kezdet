@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<project default="javadoc">
+    <target name="javadoc">
+        <javadoc access="public" author="true" classpath="E:\android-sdk\tools\support\annotations.jar" destdir="doc" nodeprecated="false" nodeprecatedlist="false" noindex="false" nonavbar="false" notree="false" packagenames="com.deviceteam.kezdet.interfaces" source="1.6" sourcefiles="gen/com/deviceteam/kezdet/BuildConfig.java" sourcepath="src;gen" splitindex="true" use="true" version="true"/>
+    </target>
+</project>

@@ -1,0 +1,7 @@
+The Ant build file (build.xml) will generate an appropriately signed jar from the output of the KezdetTestDex project.
+To use this please provide a local.properties file specifying the location of the Android SDK e.g.
+
+sdk.dir=c:\\android-sdk
+
+Add and run the Ant task to build the resulting plugin jar file.
+The file will be built to the bin directory.

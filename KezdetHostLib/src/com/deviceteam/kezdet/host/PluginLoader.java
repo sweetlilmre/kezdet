@@ -27,12 +27,21 @@ public class PluginLoader
   private X509Certificate _cert;
   private ClassLoader _parentLoader;
 
+  /**
+   * PluginLoader constructor
+   * @param context Android Context object
+   * @param parentLoader Classloader object to use as a loader context
+   */
   public PluginLoader( Context context, ClassLoader parentLoader )
   {
     _context = context;
     _parentLoader = parentLoader;
   }
 
+  /**
+   * Initialises the PluginLoader
+   * @throws PluginVerifyException
+   */
   public void init() throws PluginVerifyException
   {
     try
@@ -71,6 +80,15 @@ public class PluginLoader
     }
   }
 
+  /**
+   * Loads a plugin
+   * @param jarName name of the JAR file that contains the pluign to load
+   * @param className name of the class in the JAR file that implements IPlugin
+   * @return an IPlugin instance if the plugin is sucessfully loaded
+   * @throws PluginLoadException if the plugin cannot be loaded
+   * @throws PluginVerifyException if the plugin verification does not pass (incorrectly signed or cryptographic failure)
+   * @throws PluginCreateException if the plugin class could not be created (incorrect name or other error)
+   */
   public IPlugin loadPlugin( String jarName, String className ) throws PluginLoadException, PluginVerifyException, PluginCreateException
   {
     try

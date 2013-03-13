@@ -1,5 +1,10 @@
 package com.deviceteam.kezdet;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.security.cert.CertificateException;
+import java.security.cert.CertificateFactory;
+import java.security.cert.X509Certificate;
 import java.util.Hashtable;
 
 import com.deviceteam.kezdet.exception.PluginCreateException;
@@ -12,6 +17,7 @@ import com.deviceteam.kezdet.interfaces.IPluginCallback;
 
 import android.os.Bundle;
 import android.app.Activity;
+import android.content.Context;
 import android.util.Log;
 import android.view.Menu;
 import android.widget.TextView;
@@ -23,7 +29,7 @@ public class KezdetHostActivity extends Activity
 
   private PluginLoader _loader;
 
-  Hashtable< String, IInvokeMethod > _gyroMethods = new Hashtable< String, IInvokeMethod >();
+  Hashtable< String, IInvokeMethod > _batteryMethods = new Hashtable< String, IInvokeMethod >();
 
   public String invoke( Hashtable< String, IInvokeMethod > methods, String methodName, String jsonArgs ) throws NoSuchMethodException
   {
@@ -34,12 +40,12 @@ public class KezdetHostActivity extends Activity
     throw( new NoSuchMethodException( "No such method: " + methodName ) );
   }
 
-  private Hashtable< String, IInvokeMethod > loadPlugin( String jarName, String pluginName, IPluginCallback callback )
+  private Hashtable< String, IInvokeMethod > loadPlugin( InputStream jarStream, String pluginName, IPluginCallback callback )
   {
     IPlugin plugin;
     try
     {
-      plugin = _loader.loadPlugin( jarName, pluginName );
+      plugin = _loader.loadPlugin( jarStream, pluginName );
       plugin.initialise( getApplicationContext(), this, callback );
 
       Hashtable< String, IInvokeMethod > methods = new Hashtable< String, IInvokeMethod >();
@@ -67,35 +73,67 @@ public class KezdetHostActivity extends Activity
     super.onCreate( savedInstanceState );
     setContentView( R.layout.activity_kezdet_host );
 
-    _loader = new PluginLoader( getApplicationContext(), KezdetHostActivity.class.getClassLoader() );
+    Context context = getApplicationContext();
+    X509Certificate verificationCert = null;
+    
     try
     {
-      _loader.init();
+      InputStream is = context.getAssets().open( "kezdet-public.cer" );
+      CertificateFactory cf = CertificateFactory.getInstance( "X.509" );
+      verificationCert = (X509Certificate) cf.generateCertificate( is );      
+      is.close();
     }
-    catch( PluginVerifyException e )
+    catch( IOException e )
     {
       Log.e( TAG, e.toString() );
+      return;
     }
-
-    _gyroMethods = loadPlugin( "KezdetTestDex.jar", "com.deviceteam.kezdet.plugin.KezdetPlugin", new IPluginCallback()
+    catch( CertificateException e )
     {
-      @Override
-      public void onPluginCallback( String message, String param )
+      Log.e( TAG, e.toString() );
+      return;
+    }
+    
+    _loader = new PluginLoader( KezdetHostActivity.class.getClassLoader(), verificationCert );
+    InputStream is = null;
+    try
+    {
+      is = context.getAssets().open( "KezdetTestDex.jar" );
+      _batteryMethods = loadPlugin( is, "com.deviceteam.kezdet.plugin.KezdetPlugin", new IPluginCallback()
       {
-        DisplayResult( message, param );
+        @Override
+        public void onPluginCallback( String message, String param )
+        {
+          DisplayResult( message, param );
+        }
+      } );
+    }
+    catch( IOException e )
+    {
+      Log.e( TAG, e.toString() );
+      return;
+    }
+    finally
+    {
+      if( is != null )
+      {
+        try
+        {
+          is.close();
+        }
+        catch( IOException e )
+        {
+        }
       }
-    } );
-
-
+    }
 
     try
     {
-      invoke( _gyroMethods, "start", "1000000" );
+      invoke( _batteryMethods, "batteryLevel", "1000000" );
     }
     catch( Exception e )
     {
-      // TODO Auto-generated catch block
-      e.printStackTrace();
+      Log.e( TAG, e.toString() );
     }
   }
 
@@ -108,11 +146,10 @@ public class KezdetHostActivity extends Activity
 
   public void DisplayResult( String arg0, String arg1 )
   {
-    String[] strs = arg1.split( "&" );
     TextView txt1 = (TextView) findViewById( R.id.txtUpdate1 );
-    txt1.setText( strs[0] );
+    txt1.setText( arg0 );
     TextView txt2 = (TextView) findViewById( R.id.txtUpdate2 );
-    txt2.setText( strs[1] );
+    txt2.setText( arg1 );
   }
 
 }

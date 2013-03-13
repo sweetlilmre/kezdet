@@ -3,9 +3,11 @@ package com.deviceteam.kezdet.plugin;
 import java.util.Hashtable;
 
 import android.app.Activity;
+import android.content.BroadcastReceiver;
 import android.content.Context;
-import android.hardware.Sensor;
-import android.hardware.SensorManager;
+import android.content.Intent;
+import android.content.IntentFilter;
+import android.os.BatteryManager;
 import android.util.Log;
 
 import com.deviceteam.kezdet.interfaces.IInvokeMethod;
@@ -16,25 +18,57 @@ import com.google.gson.Gson;
 public class KezdetPlugin implements IPlugin
 {
   private IPluginCallback _callback;
-  private SensorManager _sensorManager = null;
-  private Sensor _gyroscope = null;
-  private GyroscopeListener _listener = null;
+  private int _batteryLevel = -1;
+  private BroadcastReceiver _batteryLevelReceiver;
+  private Boolean _isSupported = false;
+  private Context _context;
   private Gson _gson = new Gson();
 
   @Override
   public void initialise( Context context, Activity activity, IPluginCallback callback )
   {
-    this._callback = callback;
+    _context = context;
+    _callback = callback;
+    try
+    {
+      _batteryLevelReceiver = new BroadcastReceiver()
+      {
+        public void onReceive( Context context, Intent intent )
+        {
+          int rawlevel = intent.getIntExtra( BatteryManager.EXTRA_LEVEL, -1 );
+          int scale = intent.getIntExtra( BatteryManager.EXTRA_SCALE, -1 );
+          int level = -1;
+          if( rawlevel >= 0 && scale > 0 )
+          {
+            level = ( rawlevel * 100 ) / scale;
+          }
 
-    _sensorManager = (SensorManager) activity.getSystemService( Activity.SENSOR_SERVICE );
-    _gyroscope = _sensorManager.getDefaultSensor( Sensor.TYPE_GYROSCOPE );
-    _listener = new GyroscopeListener( _callback );
+          _batteryLevel = level;
+          _callback.onPluginCallback( "level", Integer.toString( _batteryLevel ) );
+        }
+
+      };
+
+      IntentFilter batteryLevelFilter = new IntentFilter( Intent.ACTION_BATTERY_CHANGED );
+      Intent value = _context.registerReceiver( _batteryLevelReceiver, batteryLevelFilter );
+      if( value != null )
+      {
+        _isSupported = true;
+      }
+    }
+    catch( Exception ex )
+    {
+      Log.d("battery", ex.toString() );
+    }
   }
 
   @Override
   public void dispose()
   {
-    stop();
+    if( _batteryLevelReceiver != null )
+    {
+      _context.unregisterReceiver( _batteryLevelReceiver );
+    }
   }
 
   @Override
@@ -46,7 +80,7 @@ public class KezdetPlugin implements IPlugin
   @Override
   public String getJSONData() throws UnsupportedOperationException
   {
-    return null;
+    return _gson.toJson( _batteryLevel );
   }
 
   @Override
@@ -55,60 +89,26 @@ public class KezdetPlugin implements IPlugin
     return( EventDataResponseType.JSON );
   }
 
-  public Sensor getGyroscope()
-  {
-    return _gyroscope;
-  }
-
-  public boolean start( String jsonArgs )
-  {
-    if( _gyroscope != null )
-    {
-      Integer rate = _gson.fromJson( jsonArgs, Integer.class );
-      _sensorManager.registerListener( _listener, _gyroscope, rate );
-      return( true );
-    }
-    else
-    {
-      return( false );
-    }
-  }
-
-  public boolean stop()
-  {
-    Log.i( "GyroscopeStopFunction", "call" );
-    if( _gyroscope != null )
-    {
-      _sensorManager.unregisterListener( _listener );
-      return( true );
-    }
-    else
-    {
-      return( false );
-    }
-  }
-
   @Override
   public void registerMethods( Hashtable< String, IInvokeMethod > methods )
   {
-    methods.put( "start", new IInvokeMethod()
+    methods.put( "batterySupported", new IInvokeMethod()
     {
       @Override
       public String invoke( String jsonArgs )
       {
-        return( _gson.toJson( start( jsonArgs ), Boolean.class ) );
+        return( _gson.toJson( _isSupported, Boolean.class ) );
       }
     } );
 
-    methods.put( "stop", new IInvokeMethod()
+    methods.put( "batteryLevel", new IInvokeMethod()
     {
       @Override
       public String invoke( String jsonArgs )
       {
-        return( _gson.toJson( stop(), Boolean.class ) );
+        return( _gson.toJson( _batteryLevel, Integer.class ) );
       }
     } );
-
   }
 
 }

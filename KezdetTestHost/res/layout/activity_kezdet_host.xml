@@ -4,30 +4,22 @@
     android:layout_height="match_parent" >
 
     <TextView
-        android:id="@+id/textView2"
+        android:id="@+id/txtUpdate1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:layout_centerVertical="true"
-        android:padding="@dimen/padding_medium"
-        android:text="@string/hello_world"
-        tools:context=".KezdetHostActivity" />
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginLeft="24dp"
+        android:layout_marginTop="18dp"
+        android:text="TextView1" />
 
     <TextView
         android:id="@+id/txtUpdate2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_above="@+id/textView2"
+        android:layout_alignBaseline="@+id/txtUpdate1"
+        android:layout_alignBottom="@+id/txtUpdate1"
         android:layout_centerHorizontal="true"
         android:text="TextView2" />
-
-    <TextView
-        android:id="@+id/txtUpdate1"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_above="@+id/txtUpdate2"
-        android:layout_alignLeft="@+id/txtUpdate2"
-        android:layout_marginBottom="35dp"
-        android:text="TextView1" />
 
 </RelativeLayout>

@@ -11,6 +11,7 @@ import com.deviceteam.kezdet.exception.PluginCreateException;
 import com.deviceteam.kezdet.exception.PluginLoadException;
 import com.deviceteam.kezdet.exception.PluginVerifyException;
 import com.deviceteam.kezdet.host.PluginLoader;
+import com.deviceteam.kezdet.host.PluginManager;
 import com.deviceteam.kezdet.interfaces.IInvokeMethod;
 import com.deviceteam.kezdet.interfaces.IPlugin;
 import com.deviceteam.kezdet.interfaces.IPluginCallback;
@@ -31,42 +32,6 @@ public class KezdetHostActivity extends Activity
 
   Hashtable< String, IInvokeMethod > _batteryMethods = new Hashtable< String, IInvokeMethod >();
 
-  public String invoke( Hashtable< String, IInvokeMethod > methods, String methodName, String jsonArgs ) throws NoSuchMethodException
-  {
-    if( methods.containsKey( methodName ) )
-    {
-      return( methods.get( methodName ).invoke( jsonArgs ) );
-    }
-    throw( new NoSuchMethodException( "No such method: " + methodName ) );
-  }
-
-  private Hashtable< String, IInvokeMethod > loadPlugin( InputStream jarStream, String pluginName, IPluginCallback callback )
-  {
-    IPlugin plugin;
-    try
-    {
-      plugin = _loader.loadPlugin( jarStream, pluginName );
-      plugin.initialise( getApplicationContext(), this, callback );
-
-      Hashtable< String, IInvokeMethod > methods = new Hashtable< String, IInvokeMethod >();
-      plugin.registerMethods( methods );
-      return( methods );
-    }
-    catch( PluginLoadException e )
-    {
-      Log.e( TAG, e.toString() );
-    }
-    catch( PluginVerifyException e )
-    {
-      Log.e( TAG, e.toString() );
-    }
-    catch( PluginCreateException e )
-    {
-      Log.e( TAG, e.toString() );
-    }
-    return( null );
-  }
-
   @Override
   public void onCreate( Bundle savedInstanceState )
   {
@@ -74,32 +39,16 @@ public class KezdetHostActivity extends Activity
     setContentView( R.layout.activity_kezdet_host );
 
     Context context = getApplicationContext();
-    X509Certificate verificationCert = null;
+
+    PluginManager _manager = new PluginManager( context, this );
     
     try
     {
       InputStream is = context.getAssets().open( "kezdet-public.cer" );
-      CertificateFactory cf = CertificateFactory.getInstance( "X.509" );
-      verificationCert = (X509Certificate) cf.generateCertificate( is );      
-      is.close();
-    }
-    catch( IOException e )
-    {
-      Log.e( TAG, e.toString() );
-      return;
-    }
-    catch( CertificateException e )
-    {
-      Log.e( TAG, e.toString() );
-      return;
-    }
-    
-    _loader = new PluginLoader( KezdetHostActivity.class.getClassLoader(), verificationCert );
-    InputStream is = null;
-    try
-    {
+      _manager.init( KezdetHostActivity.class.getClassLoader(), is );
+      
       is = context.getAssets().open( "KezdetTestDex.jar" );
-      _batteryMethods = loadPlugin( is, "com.deviceteam.kezdet.plugin.KezdetPlugin", new IPluginCallback()
+      _batteryMethods = _manager.loadPlugin( is, "com.deviceteam.kezdet.plugin.KezdetPlugin", new IPluginCallback()
       {
         @Override
         public void onPluginCallback( String message, String param )
@@ -107,31 +56,26 @@ public class KezdetHostActivity extends Activity
           DisplayResult( message, param );
         }
       } );
+      
+      _manager.invoke( _batteryMethods, "batteryLevel", "1000000" );
+    }
+    catch( PluginVerifyException e )
+    {
+      Log.e( TAG, e.toString() );
     }
     catch( IOException e )
     {
       Log.e( TAG, e.toString() );
-      return;
     }
-    finally
+    catch( PluginLoadException e )
     {
-      if( is != null )
-      {
-        try
-        {
-          is.close();
-        }
-        catch( IOException e )
-        {
-        }
-      }
+      Log.e( TAG, e.toString() );
     }
-
-    try
+    catch( PluginCreateException e )
     {
-      invoke( _batteryMethods, "batteryLevel", "1000000" );
+      Log.e( TAG, e.toString() );
     }
-    catch( Exception e )
+    catch( NoSuchMethodException e )
     {
       Log.e( TAG, e.toString() );
     }

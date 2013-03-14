@@ -48,7 +48,7 @@ public class PluginLoader
 
   /**
    * Loads a plugin
-   * @param pluginJarStream stream encapsulating the JAR file that contains the pluign to load
+   * @param pluginJarStream stream encapsulating the JAR file that contains the pluign to load, the stream will be closed by this method
    * @param className name of the class in the JAR file that implements IPlugin
    * @return an IPlugin instance if the plugin is successfully loaded
    * @throws PluginLoadException if the plugin cannot be loaded
@@ -113,6 +113,17 @@ public class PluginLoader
     catch( NoSuchMethodException e )
     {
       throw new PluginCreateException( String.format( "Cannot find method in class %s in plugin", className ), e );
+    }
+    finally
+    {
+      try
+      {
+        if( pluginJarStream != null )
+        {
+          pluginJarStream.close();
+        }
+      }
+      catch( IOException e ) {}
     }
   }
 }

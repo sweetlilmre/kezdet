@@ -7,7 +7,7 @@ import android.content.Context;
 
 /**
  * 
- * @author petere
+ * @author sweetlilmre
  *
  */
 public abstract interface IPlugin

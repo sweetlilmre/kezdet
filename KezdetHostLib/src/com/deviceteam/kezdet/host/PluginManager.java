@@ -19,7 +19,7 @@ import com.deviceteam.kezdet.interfaces.IPluginCallback;
 
 /**
  * Manages plugins :)
- * @author petere
+ * @author sweetlilmre
  *
  */
 public class PluginManager

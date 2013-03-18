@@ -1,7 +1,5 @@
 package com.deviceteam.kezdet.plugin;
 
-import java.util.Hashtable;
-
 import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -10,6 +8,7 @@ import android.content.IntentFilter;
 import android.os.BatteryManager;
 import android.util.Log;
 
+import com.deviceteam.kezdet.helpers.KezdetInterfaceMap;
 import com.deviceteam.kezdet.interfaces.IInvokeMethod;
 import com.deviceteam.kezdet.interfaces.IPlugin;
 import com.deviceteam.kezdet.interfaces.IPluginCallback;
@@ -90,7 +89,7 @@ public class KezdetPlugin implements IPlugin
   }
 
   @Override
-  public void registerMethods( Hashtable< String, IInvokeMethod > methods )
+  public void registerMethods( KezdetInterfaceMap methods )
   {
     methods.put( "batterySupported", new IInvokeMethod()
     {
@@ -109,6 +108,11 @@ public class KezdetPlugin implements IPlugin
         return( _gson.toJson( _batteryLevel, Integer.class ) );
       }
     } );
+  }
+
+  @Override
+  public void clearResponseData()
+  {
   }
 
 }

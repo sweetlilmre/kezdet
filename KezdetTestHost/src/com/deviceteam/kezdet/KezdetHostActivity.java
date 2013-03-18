@@ -2,17 +2,13 @@ package com.deviceteam.kezdet;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.security.cert.CertificateException;
-import java.security.cert.CertificateFactory;
-import java.security.cert.X509Certificate;
-import java.util.Hashtable;
 
 import com.deviceteam.kezdet.exception.PluginCreateException;
 import com.deviceteam.kezdet.exception.PluginLoadException;
 import com.deviceteam.kezdet.exception.PluginVerifyException;
+import com.deviceteam.kezdet.helpers.KezdetInterfaceMap;
 import com.deviceteam.kezdet.host.PluginLoader;
 import com.deviceteam.kezdet.host.PluginManager;
-import com.deviceteam.kezdet.interfaces.IInvokeMethod;
 import com.deviceteam.kezdet.interfaces.IPlugin;
 import com.deviceteam.kezdet.interfaces.IPluginCallback;
 
@@ -28,9 +24,7 @@ public class KezdetHostActivity extends Activity
 
   public static String TAG = "KezdetHostActivity";
 
-  private PluginLoader _loader;
-
-  Hashtable< String, IInvokeMethod > _batteryMethods = new Hashtable< String, IInvokeMethod >();
+  KezdetInterfaceMap _batteryMethods = new KezdetInterfaceMap();
 
   @Override
   public void onCreate( Bundle savedInstanceState )
@@ -40,15 +34,15 @@ public class KezdetHostActivity extends Activity
 
     Context context = getApplicationContext();
 
-    PluginManager _manager = new PluginManager( context, this );
+    PluginManager _manager = new PluginManager( );
     
     try
     {
-      InputStream is = context.getAssets().open( "kezdet-public.cer" );
-      _manager.init( KezdetHostActivity.class.getClassLoader(), is );
+      InputStream is = context.getAssets().open( "certificates/kezdet-public.cer" );
+      _manager.init( context, this, KezdetHostActivity.class.getClassLoader(), is );
       
       is = context.getAssets().open( "KezdetTestDex.jar" );
-      _batteryMethods = _manager.loadPlugin( is, "com.deviceteam.kezdet.plugin.KezdetPlugin", new IPluginCallback()
+      IPlugin plugin = _manager.loadPlugin( is, "com.deviceteam.kezdet.plugin.KezdetPlugin", new IPluginCallback()
       {
         @Override
         public void onPluginCallback( String message, String param )
@@ -56,6 +50,9 @@ public class KezdetHostActivity extends Activity
           DisplayResult( message, param );
         }
       } );
+ 
+      KezdetInterfaceMap _batteryMethods = new KezdetInterfaceMap();
+      plugin.registerMethods( _batteryMethods );
       
       _manager.invoke( _batteryMethods, "batteryLevel", "1000000" );
     }

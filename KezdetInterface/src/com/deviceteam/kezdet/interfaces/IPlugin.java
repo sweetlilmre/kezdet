@@ -1,6 +1,6 @@
 package com.deviceteam.kezdet.interfaces;
 
-import java.util.Hashtable;
+import com.deviceteam.kezdet.helpers.KezdetInterfaceMap;
 
 import android.app.Activity;
 import android.content.Context;
@@ -34,7 +34,7 @@ public abstract interface IPlugin
    * Registers all available plugin methods with the host
    * @param methods Hashtable of name to IInvokeMethod references that the plugin uses to register its provided methods against.
    */
-  void registerMethods( Hashtable< String, IInvokeMethod > methods );
+  void registerMethods( KezdetInterfaceMap methods );
   
   /**
    * Cleanup method used to dispose any resources acquired during the lifetime of the plugin
@@ -60,4 +60,9 @@ public abstract interface IPlugin
    * @throws UnsupportedOperationException if the plugin does not support this format
    */
   String getJSONData() throws UnsupportedOperationException;
+  
+  /**
+   * 
+   */
+  void clearResponseData();
 }

@@ -2,8 +2,6 @@ package com.deviceteam.kezdet;
 
 import com.deviceteam.kezdet.interfaces.IPluginCallback;
 
-;
-
 public class KezdetListener implements IPluginCallback
 {
   private KezdetHostActivity _activity;

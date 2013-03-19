@@ -7,7 +7,6 @@ import com.deviceteam.kezdet.exception.PluginCreateException;
 import com.deviceteam.kezdet.exception.PluginLoadException;
 import com.deviceteam.kezdet.exception.PluginVerifyException;
 import com.deviceteam.kezdet.helpers.KezdetInterfaceMap;
-import com.deviceteam.kezdet.host.PluginLoader;
 import com.deviceteam.kezdet.host.PluginManager;
 import com.deviceteam.kezdet.interfaces.IPlugin;
 import com.deviceteam.kezdet.interfaces.IPluginCallback;
@@ -54,7 +53,8 @@ public class KezdetHostActivity extends Activity
       KezdetInterfaceMap _batteryMethods = new KezdetInterfaceMap();
       plugin.registerMethods( _batteryMethods );
       
-      _manager.invoke( _batteryMethods, "batteryLevel", "1000000" );
+      String battLevel = _manager.invoke( _batteryMethods, "batteryLevel", "1000000" );
+      Log.d( TAG, "Battery Level is: " + battLevel );
     }
     catch( PluginVerifyException e )
     {

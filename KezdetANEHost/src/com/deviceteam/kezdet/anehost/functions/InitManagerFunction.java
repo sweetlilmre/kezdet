@@ -4,7 +4,6 @@ import java.io.IOException;
 
 import android.app.Activity;
 import android.content.Context;
-import android.util.Log;
 
 import com.adobe.fre.FREContext;
 import com.adobe.fre.FREFunction;
@@ -36,16 +35,16 @@ public class InitManagerFunction extends BaseFunction implements FREFunction
     catch( PluginVerifyException e )
     {
       returnCode = HostResponseValues.CertificateVerifyError;
-      Log.e( TAG, "Certificate failed verification: " + e );
+      LogE( "certificate failed verification: " + e );
     }
     catch( IOException e )
     {
-      Log.e( TAG, "Certificate failed to load: " + e );
+      LogE( "certificate failed to load: " + e );
       returnCode = HostResponseValues.CertificateLoadError;
     }
     catch( Exception e )
     {
-      Log.e( TAG, "InitManagerFunction failed: " + e );
+      LogE( "initManagerFunction failed: " + e );
     }
     
     return( GenerateReturnObject( returnCode, 0 ) );

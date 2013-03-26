@@ -1,8 +1,6 @@
 package com.deviceteam.kezdet.anehost.functions;
 
 
-import android.util.Log;
-
 import com.adobe.fre.FREContext;
 import com.adobe.fre.FREFunction;
 import com.adobe.fre.FREObject;
@@ -34,21 +32,21 @@ public class LoadFunction extends BaseFunction implements FREFunction
     catch( PluginLoadException e )
     {
       returnCode = HostResponseValues.PluginLoadError;
-      Log.e( TAG, "Plugin load failed: " + e );
+      LogE( "plugin load failed: " + e );
     }
     catch( PluginVerifyException e )
     {
       returnCode = HostResponseValues.PluginVerificationError;
-      Log.e( TAG, "Plugin verification failed: " + e );
+      LogE( "verification failed: " + e );
     }
     catch( PluginCreateException e )
     {
       returnCode = HostResponseValues.PluginCreateError;
-      Log.e( TAG, "Plugin creation failed: " + e );
+      LogE( "plugin creation failed: " + e );
     }
     catch( Exception e )
     {
-      Log.e( TAG, "Unable to load plugin: " + e );
+      LogE( "unable to load plugin: " + e );
     }
     
     return( GenerateReturnObject( returnCode, pluginId ) );

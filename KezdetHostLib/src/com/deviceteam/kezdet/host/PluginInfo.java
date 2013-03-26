@@ -1,4 +1,4 @@
-package com.deviceteam.kezdet.anehost.utils;
+package com.deviceteam.kezdet.host;
 
 import com.deviceteam.kezdet.helpers.KezdetInterfaceMap;
 import com.deviceteam.kezdet.interfaces.IPlugin;

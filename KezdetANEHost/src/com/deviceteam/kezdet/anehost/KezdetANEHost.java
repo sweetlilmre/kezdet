@@ -5,50 +5,42 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.ArrayList;
 
 import android.app.Activity;
 import android.content.Context;
-import android.util.Log;
 
 import com.adobe.fre.FREContext;
 import com.adobe.fre.FREExtension;
-import com.deviceteam.kezdet.anehost.utils.PluginInfo;
 import com.deviceteam.kezdet.exception.PluginCreateException;
 import com.deviceteam.kezdet.exception.PluginLoadException;
 import com.deviceteam.kezdet.exception.PluginVerifyException;
-import com.deviceteam.kezdet.helpers.KezdetInterfaceMap;
 import com.deviceteam.kezdet.host.PluginManager;
-import com.deviceteam.kezdet.interfaces.IPlugin;
 import com.deviceteam.kezdet.interfaces.IPluginCallback;
+import com.deviceteam.kezdet.interfaces.exception.BadPluginException;
 
 
 public class KezdetANEHost implements FREExtension
 {
   public static final String TAG = "KezdetANEHost";
   private PluginManager _manager;
-  private ArrayList< PluginInfo > _pluginList  = new ArrayList< PluginInfo >();
   private String _jarLocation;
   
 
   @Override
   public FREContext createContext(String arg)
   {
-    Log.d(TAG, "createContext()");
     return( new KezdetANEHostContext( this ) );
   }
 
   @Override
   public void initialize()
   {
-    Log.d(TAG, "initialise()");
     _manager = new PluginManager();
   }
 
   @Override
   public void dispose()
   {
-    Log.d(TAG, "dispose()");
     _manager.dispose();
   }
 
@@ -56,8 +48,19 @@ public class KezdetANEHost implements FREExtension
   {
     _jarLocation = jarLoction;
     ClassLoader parentClassloader = KezdetANEHost.class.getClassLoader();
-    InputStream certificateStream = context.getAssets().open( "certificates/kezdet-public.cer" );
-    _manager.init( context, activity, parentClassloader, certificateStream );
+    InputStream certificateStream = null;
+    try
+    {
+      certificateStream = context.getAssets().open( "certificates/kezdet-public.cer" );
+      _manager.init( context, activity, parentClassloader, certificateStream );
+    }
+    finally
+    {
+      if( certificateStream != null )
+      {
+        certificateStream.close();
+      }
+    }
   }
   
   private String combinePath( String path1, String path2 )
@@ -67,73 +70,62 @@ public class KezdetANEHost implements FREExtension
     return( file2.getPath() );
   }
 
+  
   public int loadPlugin( FREContext freContext, String pluginFile, String pluginClassName ) throws FileNotFoundException, PluginLoadException, PluginVerifyException, PluginCreateException
   {
-    FileInputStream fis = new FileInputStream( combinePath( _jarLocation,  pluginFile ) );
-    final int id = _pluginList.size() + 1;
-    final FREContext ctx = freContext;
-    IPlugin plugin = _manager.loadPlugin( fis, pluginClassName, new IPluginCallback()
+    FileInputStream fis = null;
+    try
     {
-      @Override
-      public void onPluginCallback( String message, String param )
+      fis = new FileInputStream( combinePath( _jarLocation,  pluginFile ) );
+      final FREContext ctx = freContext;
+      final int id = _manager.getNextPluginId();
+      _manager.loadPlugin(id, fis, pluginClassName, new IPluginCallback()
       {
-        ctx.dispatchStatusEventAsync( Integer.toString( id ) + ":" + message, param );
+        @Override
+        public void onPluginCallback( String message, String param )
+        {
+          ctx.dispatchStatusEventAsync( Integer.toString( id ) + ":" + message, param );
+        }
+      } );
+      return( id );
+    }
+    finally
+    {
+      if( fis != null )
+      {
+        try
+        {
+          fis.close();
+        }
+        catch( IOException e )
+        {
+        }
       }
-    } );
-    
-    KezdetInterfaceMap methodMap = new KezdetInterfaceMap();
-    plugin.registerMethods( methodMap );
-    PluginInfo info = new PluginInfo( plugin, methodMap );
-
-    _pluginList.add( info );
-    
-    return( id );
+    }
   }
 
-  public String invokePluginMethod( int pluginId, String methodName, String params ) throws IndexOutOfBoundsException, NoSuchMethodException
+  public String invokePluginMethod( int pluginId, String methodName, String params ) throws IndexOutOfBoundsException, NoSuchMethodException, BadPluginException
   {
-    if( pluginId < 1 || pluginId > _pluginList.size() )
-    {
-      throw new IndexOutOfBoundsException("PluginId: " + pluginId + " does not exist");
-    }
-    Log.d( TAG, "about to invoke: " + methodName + ", with args: " + params );
-    KezdetInterfaceMap methods = _pluginList.get( pluginId - 1 ).get_methods();
-    return( _manager.invoke( methods, methodName, params ) );
+    return( _manager.invokePluginMethod( pluginId, methodName, params ) );
   }
 
-  public void clearPluginData( int pluginId ) throws IndexOutOfBoundsException
+  public void clearPluginData( int pluginId ) throws IndexOutOfBoundsException, BadPluginException
   {
-    if( pluginId < 1 || pluginId > _pluginList.size() )
-    {
-      throw new IndexOutOfBoundsException("PluginId: " + pluginId + " does not exist");
-    }
-    _pluginList.get( pluginId - 1 ).get_plugin().clearResponseData();
+    _manager.clearPluginData( pluginId );
   }
 
-  public String getResponseType( int pluginId ) throws IndexOutOfBoundsException
+  public String getResponseType( int pluginId ) throws IndexOutOfBoundsException, BadPluginException
   {
-    if( pluginId < 1 || pluginId > _pluginList.size() )
-    {
-      throw new IndexOutOfBoundsException("PluginId: " + pluginId + " does not exist");
-    }
-    return( _pluginList.get( pluginId - 1 ).get_plugin().getReponseType().toString() );
+    return( _manager.getResponseType( pluginId ) );
   }
   
-  public String getJSONResponse( int pluginId ) throws IndexOutOfBoundsException
+  public String getJSONResponse( int pluginId ) throws IndexOutOfBoundsException, UnsupportedOperationException, BadPluginException
   {
-    if( pluginId < 1 || pluginId > _pluginList.size() )
-    {
-      throw new IndexOutOfBoundsException("PluginId: " + pluginId + " does not exist");
-    }
-    return( _pluginList.get( pluginId - 1 ).get_plugin().getJSONData() );
+    return( _manager.getJSONResponse( pluginId ) );
   }
   
-  public byte[] getBinaryResponse( int pluginId ) throws IndexOutOfBoundsException
+  public byte[] getBinaryResponse( int pluginId ) throws IndexOutOfBoundsException, UnsupportedOperationException, BadPluginException
   {
-    if( pluginId < 1 || pluginId > _pluginList.size() )
-    {
-      throw new IndexOutOfBoundsException("PluginId: " + pluginId + " does not exist");
-    }
-    return( _pluginList.get( pluginId - 1 ).get_plugin().getBinaryData() );
+    return( _manager.getBinaryResponse( pluginId ) );
   }
 }

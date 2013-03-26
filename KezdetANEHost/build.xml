@@ -64,7 +64,7 @@
 
         <jar destfile="${build.dir}/KezdetANEHost.jar"
             basedir="${classes.dir}"
-            manifest="MANIFEST.MF">
+            manifest="${build.dir}/MANIFEST.MF">
             <fileset dir="${classes.dir}" includes="./**/*.class" />
             <zipgroupfileset dir="${libs.external}" includes="**/gson*.jar" />
             <zipgroupfileset dir="${libs.interface}" includes="**/*.jar" />

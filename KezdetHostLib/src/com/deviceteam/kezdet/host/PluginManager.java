@@ -5,6 +5,7 @@ import java.io.InputStream;
 import java.security.cert.CertificateException;
 import java.security.cert.CertificateFactory;
 import java.security.cert.X509Certificate;
+import java.util.ArrayList;
 
 import android.app.Activity;
 import android.content.Context;
@@ -15,6 +16,7 @@ import com.deviceteam.kezdet.exception.PluginVerifyException;
 import com.deviceteam.kezdet.helpers.KezdetInterfaceMap;
 import com.deviceteam.kezdet.interfaces.IPlugin;
 import com.deviceteam.kezdet.interfaces.IPluginCallback;
+import com.deviceteam.kezdet.interfaces.exception.BadPluginException;
 
 /**
  * Manages plugins :)
@@ -23,9 +25,12 @@ import com.deviceteam.kezdet.interfaces.IPluginCallback;
  */
 public class PluginManager
 {
+  public static final String TAG = "PluginManager";
   private PluginLoader _loader;
   private Context _context;
   private Activity _activity;
+  private ArrayList< PluginInfo > _pluginList  = new ArrayList< PluginInfo >();
+  
   
   /**
    * PluginManager constructor
@@ -71,42 +76,146 @@ public class PluginManager
     _loader = new PluginLoader( parentClassloader, verificationCert );
   }
   
+  /**
+   * Disposes all loaded plugins
+   */
   public void dispose()
   {
-    
+    for( int i = 0; i < _pluginList.size(); i++ )
+    {
+      _pluginList.get( i ).get_plugin().dispose();
+    }
   }
-  
+
+  /**
+   * Call this method to obtain the id needed for a {@link #loadPlugin} call
+   * @return integer identifier
+   */
+  public int getNextPluginId()
+  {
+    return( _pluginList.size() + 1 );
+  }
+
   /**
    * Dynamically loads a plugin from a JAR file represented by the pluginStream parameter
+   * @param pluginId an integer identifier obtained from a call to {@link #getNextPluginId}
    * @param pluginStream a stream representing a JAR file that contains the plugin
    * @param pluginClassName the name of the class in the JAR stream that implements IPlugin
    * @param callback an IPluginCallback interface used by the plugin to communicate asynchronous event information
-   * @return an IPlugin interface
    * @throws PluginLoadException when the plugin fails to load (IOError)
    * @throws PluginVerifyException when the plugin cannot be successfully verified against the supplied public certificate 
    * @throws PluginCreateException when the plugin has been loaded and verified but cannot be instantiated
    */
-  public IPlugin loadPlugin( InputStream pluginStream, String pluginClassName, IPluginCallback callback ) throws PluginLoadException, PluginVerifyException, PluginCreateException
+  public void loadPlugin( int pluginId, InputStream pluginStream, String pluginClassName, IPluginCallback callback ) throws PluginLoadException, PluginVerifyException, PluginCreateException
   {
     IPlugin plugin = _loader.loadPlugin( pluginStream, pluginClassName );
     plugin.initialise( _context, _activity, callback );
-    return( plugin );
+    
+    KezdetInterfaceMap methodMap = new KezdetInterfaceMap();
+    plugin.registerMethods( methodMap );
+    PluginInfo info = new PluginInfo( plugin, methodMap );
+
+    _pluginList.add( info );    
   }
   
   /**
    * Invokes a method on a plugin method list
-   * @param methods a Hashtable of method names mapped to {@link com.deviceteam.kezdet.interfaces#IInvokeMethod IInvokeMethod} references, see {@link #loadPlugin(InputStream, String, IPluginCallback) loadPlugin}
+   * @param pluginId the integer identifier of the plugin
    * @param methodName the name of the method to invoke
    * @param jsonArgs a string in JSON object format passed to the method representing the method parameters
    * @return a string in JSON object format representing the return result of the method
-   * @throws NoSuchMethodException
+   * @throws IndexOutOfBoundsException, NoSuchMethodException 
    */
-  public String invoke( KezdetInterfaceMap methods, String methodName, String jsonArgs ) throws NoSuchMethodException
+  public String invokePluginMethod( int pluginId, String methodName, String jsonArgs ) throws IndexOutOfBoundsException, NoSuchMethodException, BadPluginException
   {
+    if( pluginId < 1 || pluginId > _pluginList.size() )
+    {
+      throw new IndexOutOfBoundsException("PluginId: " + pluginId + " does not exist");
+    }
+    KezdetInterfaceMap methods = _pluginList.get( pluginId - 1 ).get_methods();
     if( methods.containsKey( methodName ) )
     {
-      return( methods.get( methodName ).invoke( jsonArgs ) );
+      try
+      {
+        return( methods.get( methodName ).invoke( jsonArgs ) );
+      }
+      catch( Exception e )
+      {
+        throw( new BadPluginException( "Plugin failed to handle exception", e ) );
+      }
     }
     throw( new NoSuchMethodException( "No such method: " + methodName ) );
   }
+
+  public void clearPluginData( int pluginId ) throws IndexOutOfBoundsException, BadPluginException
+  {
+    if( pluginId < 1 || pluginId > _pluginList.size() )
+    {
+      throw new IndexOutOfBoundsException("PluginId: " + pluginId + " does not exist");
+    }
+    try
+    {
+      _pluginList.get( pluginId - 1 ).get_plugin().clearResponseData();
+    }
+    catch( Exception e )
+    {
+      throw( new BadPluginException( "Plugin failed to handle exception", e ) );
+    }    
+  }
+
+  public String getResponseType( int pluginId ) throws IndexOutOfBoundsException, BadPluginException
+  {
+    if( pluginId < 1 || pluginId > _pluginList.size() )
+    {
+      throw new IndexOutOfBoundsException("PluginId: " + pluginId + " does not exist");
+    }
+    try
+    {
+      return( _pluginList.get( pluginId - 1 ).get_plugin().getReponseType().toString() );
+    }
+    catch( Exception e )
+    {
+      throw( new BadPluginException( "Plugin failed to handle exception", e ) );
+    }
+  }
+  
+  public String getJSONResponse( int pluginId ) throws IndexOutOfBoundsException, BadPluginException, UnsupportedOperationException
+  {
+    if( pluginId < 1 || pluginId > _pluginList.size() )
+    {
+      throw new IndexOutOfBoundsException("PluginId: " + pluginId + " does not exist");
+    }
+    try
+    {
+      return( _pluginList.get( pluginId - 1 ).get_plugin().getJSONData() );
+    }
+    catch( UnsupportedOperationException e )
+    {
+      throw( e );
+    }
+    catch( Exception e )
+    {
+      throw( new BadPluginException( "Plugin failed to handle exception", e ) );
+    }
+  }
+  
+  public byte[] getBinaryResponse( int pluginId ) throws IndexOutOfBoundsException, BadPluginException, UnsupportedOperationException
+  {
+    if( pluginId < 1 || pluginId > _pluginList.size() )
+    {
+      throw new IndexOutOfBoundsException("PluginId: " + pluginId + " does not exist");
+    }
+    try
+    {
+      return( _pluginList.get( pluginId - 1 ).get_plugin().getBinaryData() );
+    }
+    catch( UnsupportedOperationException e )
+    {
+      throw( e );
+    }
+    catch( Exception e )
+    {
+      throw( new BadPluginException( "Plugin failed to handle exception", e ) );
+    }
+  }  
 }

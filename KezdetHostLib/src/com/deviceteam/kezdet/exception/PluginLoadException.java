@@ -18,5 +18,4 @@ public class PluginLoadException extends Exception
   {
     super( throwable );
   }
-
 }

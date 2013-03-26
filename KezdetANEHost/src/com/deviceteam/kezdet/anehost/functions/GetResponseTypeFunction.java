@@ -1,7 +1,5 @@
 package com.deviceteam.kezdet.anehost.functions;
 
-import android.util.Log;
-
 import com.adobe.fre.FREContext;
 import com.adobe.fre.FREFunction;
 import com.adobe.fre.FREObject;
@@ -32,11 +30,11 @@ public class GetResponseTypeFunction extends BaseFunction implements FREFunction
     catch( IndexOutOfBoundsException e )
     {
       returnCode = HostResponseValues.InvalidPluginId;
-      Log.e(TAG, "GetResponseTypeFunction invalid pluginId: " + e );
+      LogE( "invalid pluginId: " + e );
     }
     catch( Exception e )
     {
-      Log.e(TAG, "GetResponseTypeFunction failed: " + e );
+      LogE( "failed: " + e );
     }
     return( GenerateReturnObject( returnCode, returnValue ) );
   }

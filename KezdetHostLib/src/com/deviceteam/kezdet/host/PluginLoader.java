@@ -43,7 +43,6 @@ public class PluginLoader
     {
       os.write( b, 0, noOfBytes );
     }
-    os.close();
   }
 
   /**
@@ -64,8 +63,9 @@ public class PluginLoader
       result.deleteOnExit();
 
       FileOutputStream fos = new FileOutputStream( result );
-
       CopyStream( pluginJarStream, fos );
+      fos.close();
+      
       JarFile jf = new JarFile( result );
       JarVerifier.verify( jf, new X509Certificate[] { _verificationCert } );
 
@@ -113,17 +113,6 @@ public class PluginLoader
     catch( NoSuchMethodException e )
     {
       throw new PluginCreateException( String.format( "Cannot find method in class %s in plugin", className ), e );
-    }
-    finally
-    {
-      try
-      {
-        if( pluginJarStream != null )
-        {
-          pluginJarStream.close();
-        }
-      }
-      catch( IOException e ) {}
     }
   }
 }

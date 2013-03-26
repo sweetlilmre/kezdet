@@ -10,7 +10,9 @@ public enum HostResponseValues
   PluginVerificationError(5),
   PluginCreateError(6),
   InvalidPluginId(7),
-  NoSuchMethod(8);
+  NoSuchMethod(8),
+  UnsupportedOperation(9),
+  BadPlugin(10);
 
   private final int _value;
 

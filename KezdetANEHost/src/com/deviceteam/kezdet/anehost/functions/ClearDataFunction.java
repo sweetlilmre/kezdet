@@ -1,12 +1,11 @@
 package com.deviceteam.kezdet.anehost.functions;
 
-import android.util.Log;
-
 import com.adobe.fre.FREContext;
 import com.adobe.fre.FREFunction;
 import com.adobe.fre.FREObject;
 import com.deviceteam.kezdet.anehost.KezdetANEHost;
 import com.deviceteam.kezdet.anehost.utils.HostResponseValues;
+import com.deviceteam.kezdet.interfaces.exception.BadPluginException;
 
 public class ClearDataFunction extends BaseFunction implements FREFunction
 {
@@ -26,9 +25,14 @@ public class ClearDataFunction extends BaseFunction implements FREFunction
       _host.clearPluginData( pluginId );
       returnCode = HostResponseValues.OK;
     }
+    catch( BadPluginException e )
+    {
+      LogE("plugin did not handle exception: " + e );
+      returnCode = HostResponseValues.BadPlugin;
+    }
     catch( Exception e )
     {
-      Log.e(TAG, "ClearDataFunction failed: " + e );
+      LogE("failed: " + e );
     }
     return GenerateReturnObject( returnCode, 0 );
   }

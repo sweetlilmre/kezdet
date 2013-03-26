@@ -63,7 +63,6 @@
   			<flattenmapper />
 		</signjar>
     	<copy file="${out.absolute.dir}/${ant.project.name}.jar" todir="../KezdetTestHost/assets" />
-    	<copy file="../cert/kezdet-public.cer" todir="../KezdetTestHost/assets" />
     	
     </target>
 

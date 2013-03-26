@@ -21,6 +21,12 @@ public class BaseFunction
     _host = loader;
     TAG = tag;
   }
+  
+  public void LogE( String message )
+  {
+    String className = this.getClass().getSimpleName();
+    Log.e( TAG, className + " " + message );
+  }
 
   FREObject GenerateReturnObject( HostResponseValues returnCode, String returnValue )
   {

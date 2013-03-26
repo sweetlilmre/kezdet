@@ -1,12 +1,11 @@
 package com.deviceteam.kezdet.anehost.functions;
 
-import android.util.Log;
-
 import com.adobe.fre.FREContext;
 import com.adobe.fre.FREFunction;
 import com.adobe.fre.FREObject;
 import com.deviceteam.kezdet.anehost.KezdetANEHost;
 import com.deviceteam.kezdet.anehost.utils.HostResponseValues;
+import com.deviceteam.kezdet.interfaces.exception.BadPluginException;
 
 public class GetJSONResponseFunction extends BaseFunction implements FREFunction
 {
@@ -29,11 +28,21 @@ public class GetJSONResponseFunction extends BaseFunction implements FREFunction
     catch( IndexOutOfBoundsException e )
     {
       returnCode = HostResponseValues.InvalidPluginId;
-      Log.e(TAG, "GetJSONResponseFunction invalid pluginId: " + e );
+      LogE( "invalid pluginId: " + e );
+    }
+    catch( UnsupportedOperationException e )
+    {
+      LogE( "not supported: " + e );
+      returnCode = HostResponseValues.UnsupportedOperation;
+    }
+    catch( BadPluginException e )
+    {
+      LogE( "plugin did not handle exception: " + e );
+      returnCode = HostResponseValues.BadPlugin;
     }
     catch( Exception e )
     {
-      Log.e(TAG, "GetJSONResponseFunction failed: " + e );
+      LogE( "failed: " + e );
     }
     return( GenerateReturnObject( returnCode, returnValue ) );
     

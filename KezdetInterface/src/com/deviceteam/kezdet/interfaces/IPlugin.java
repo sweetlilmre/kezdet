@@ -1,9 +1,9 @@
 package com.deviceteam.kezdet.interfaces;
 
-import com.deviceteam.kezdet.helpers.KezdetInterfaceMap;
-
 import android.app.Activity;
 import android.content.Context;
+
+import com.deviceteam.kezdet.helpers.KezdetInterfaceMap;
 
 /**
  * 
@@ -32,7 +32,7 @@ public abstract interface IPlugin
   
   /**
    * Registers all available plugin methods with the host
-   * @param methods Hashtable of name to IInvokeMethod references that the plugin uses to register its provided methods against.
+   * @param methods {@link com.deviceteam.kezdet.helpers.KezdetInterfaceMap KezdetInterfaceMap} that the plugin uses to register its provided methods against.
    */
   void registerMethods( KezdetInterfaceMap methods );
   

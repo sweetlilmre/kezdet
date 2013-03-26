@@ -26,6 +26,7 @@ public class KezdetANEHostContext extends FREContext
   @Override
   public void dispose()
   {
+    _host.dispose();
   }
 
   @Override

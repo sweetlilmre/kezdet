@@ -1,7 +1,5 @@
 package com.deviceteam.kezdet.anehost.functions;
 
-import android.util.Log;
-
 import com.adobe.fre.FREContext;
 import com.adobe.fre.FREFunction;
 import com.adobe.fre.FREObject;
@@ -38,16 +36,16 @@ public class InvokeFunction extends BaseFunction implements FREFunction
     catch( IndexOutOfBoundsException e)
     {
       returnCode = HostResponseValues.InvalidPluginId;
-      Log.e( TAG, "InvokePluginFunction called on non-existant plugin: " + e );
+      LogE( "called on non-existant plugin: " + e );
     }
     catch( NoSuchMethodException e )
     {
       returnCode = HostResponseValues.NoSuchMethod;
-      Log.e( TAG, "InvokePluginFunction attempt to invoke unknown method: " + e );
+      LogE( "attempt to invoke unknown method: " + e );
     }
     catch( Exception e )
     {
-      Log.e( TAG, "InvokePluginFunction unknown exception " + e );
+      LogE( "unknown exception " + e );
     }
     
     return( GenerateReturnObject( returnCode, returnValue ) );

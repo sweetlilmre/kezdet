@@ -11,5 +11,7 @@ package com.deviceteam.kezdet.airhost
     public static var PluginCreateError : int = 6;
     public static var InvalidPluginId : int = 7;
     public static var NoSuchMethod : int = 8;
+    public static var UnsupportedOperation : int = 9;
+    public static var BadPlugin : int = 10;
   }
 }

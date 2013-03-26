@@ -78,8 +78,8 @@ public class KezdetANEHost implements FREExtension
     {
       fis = new FileInputStream( combinePath( _jarLocation,  pluginFile ) );
       final FREContext ctx = freContext;
-      final int id = _manager.getNextPluginId();
-      _manager.loadPlugin(id, fis, pluginClassName, new IPluginCallback()
+      final int id = _manager.loadPlugin( fis, pluginClassName );
+      _manager.initPlugin( id, new IPluginCallback()
       {
         @Override
         public void onPluginCallback( String message, String param )

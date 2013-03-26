@@ -87,18 +87,9 @@ public class PluginManager
     }
   }
 
-  /**
-   * Call this method to obtain the id needed for a {@link #loadPlugin} call
-   * @return integer identifier
-   */
-  public int getNextPluginId()
-  {
-    return( _pluginList.size() + 1 );
-  }
 
   /**
    * Dynamically loads a plugin from a JAR file represented by the pluginStream parameter
-   * @param pluginId an integer identifier obtained from a call to {@link #getNextPluginId}
    * @param pluginStream a stream representing a JAR file that contains the plugin
    * @param pluginClassName the name of the class in the JAR stream that implements IPlugin
    * @param callback an IPluginCallback interface used by the plugin to communicate asynchronous event information
@@ -106,16 +97,32 @@ public class PluginManager
    * @throws PluginVerifyException when the plugin cannot be successfully verified against the supplied public certificate 
    * @throws PluginCreateException when the plugin has been loaded and verified but cannot be instantiated
    */
-  public void loadPlugin( int pluginId, InputStream pluginStream, String pluginClassName, IPluginCallback callback ) throws PluginLoadException, PluginVerifyException, PluginCreateException
+  public int loadPlugin( InputStream pluginStream, String pluginClassName ) throws PluginLoadException, PluginVerifyException, PluginCreateException
   {
+    int pluginId = _pluginList.size() + 1;
     IPlugin plugin = _loader.loadPlugin( pluginStream, pluginClassName );
-    plugin.initialise( _context, _activity, callback );
     
     KezdetInterfaceMap methodMap = new KezdetInterfaceMap();
     plugin.registerMethods( methodMap );
     PluginInfo info = new PluginInfo( plugin, methodMap );
 
-    _pluginList.add( info );    
+    _pluginList.add( info ); 
+    return( pluginId );
+  }
+  
+  /**
+   * Initialises a loaded plugin
+   * @param pluginId the plugin to initialise
+   * @param callback a callback method to pass to the plugin
+   * @throws IndexOutOfBoundsException if the pluginId is invalid (out of range)
+   */
+  public void initPlugin( int pluginId, IPluginCallback callback ) throws IndexOutOfBoundsException
+  {
+    if( pluginId < 1 || pluginId > _pluginList.size() )
+    {
+      throw new IndexOutOfBoundsException("PluginId: " + pluginId + " does not exist");
+    }
+    _pluginList.get( pluginId - 1 ).get_plugin().initialise( _context, _activity, callback );
   }
   
   /**

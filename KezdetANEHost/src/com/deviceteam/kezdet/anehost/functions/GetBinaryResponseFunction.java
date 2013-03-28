@@ -22,7 +22,7 @@ public class GetBinaryResponseFunction extends BaseFunction implements FREFuncti
     try
     {
       int pluginId = arg1[0].getAsInt();
-      returnValue = _host.getBinaryResponse( pluginId ); 
+      returnValue = _host.get_pluginManager().getBinaryResponse( pluginId ); 
       returnCode = HostResponseValues.OK;
     }
     catch( IndexOutOfBoundsException e )

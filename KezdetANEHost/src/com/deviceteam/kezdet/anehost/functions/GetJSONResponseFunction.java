@@ -22,7 +22,7 @@ public class GetJSONResponseFunction extends BaseFunction implements FREFunction
     try
     {
       int pluginId = arg1[0].getAsInt();
-      returnValue = _host.getJSONResponse( pluginId ); 
+      returnValue = _host.get_pluginManager().getJSONResponse( pluginId ); 
       returnCode = HostResponseValues.OK;
     }
     catch( IndexOutOfBoundsException e )

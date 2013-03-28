@@ -1,11 +1,13 @@
 package com.deviceteam.kezdet;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 
 import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
+import android.os.Environment;
 import android.util.Log;
 import android.view.Menu;
 import android.widget.TextView;
@@ -33,6 +35,7 @@ public class KezdetHostActivity extends Activity
 
     PluginManager _manager = new PluginManager( );
     InputStream is = null;
+    int pluginId;
     
     try
     {
@@ -41,9 +44,10 @@ public class KezdetHostActivity extends Activity
       is.close();
       
       is = context.getAssets().open( "KezdetTestDex.jar" );
-      int pluginId = _manager.getNextPluginId();
       
-      _manager.loadPlugin( pluginId, is, "com.deviceteam.kezdet.plugin.KezdetPlugin", new IPluginCallback()
+      /*
+      pluginId = _manager.loadPlugin( is, "com.deviceteam.kezdet.plugin.KezdetPlugin" );
+      _manager.initPlugin( pluginId, new IPluginCallback()
       {
         @Override
         public void onPluginCallback( String message, String param )
@@ -55,11 +59,12 @@ public class KezdetHostActivity extends Activity
  
       String battLevel = _manager.invokePluginMethod( pluginId, "batteryLevel", "1000000" );
       Log.d( TAG, "Battery Level is: " + battLevel );
+      */
       
       is = context.getAssets().open( "KezdetURLLoaderE.jar" );
       
-      pluginId = _manager.getNextPluginId();
-      _manager.loadPlugin( pluginId, is, "com.deviceteam.networking.URLLoaderPlugin", new IPluginCallback()
+      pluginId = _manager.loadPlugin( is, "com.deviceteam.networking.URLLoaderPlugin" );
+      _manager.initPlugin( pluginId, new IPluginCallback()
       {
         @Override
         public void onPluginCallback( String message, String param )
@@ -71,8 +76,8 @@ public class KezdetHostActivity extends Activity
 
 
       _manager.invokePluginMethod( pluginId, "init", _gson.toJson( Integer.valueOf( 1 ) ) );
-      
-      _manager.invokePluginMethod( pluginId, "load", "{'contentType':null,'followRedirects':true,'userAgent':'Mozilla/5.0 (Windows; U; en-US) AppleWebKit/533.19.4 (KHTML, like Gecko) AdobeAIR/3.4','data':null,'manageCookies':true,'requestHeaders':[],'method':'GET','cacheResponse':true,'idleTimeout':0,'authenticate':true,'url':'http://nanodroid.gameassists.co.uk/apks/saucissontest.apk','useCache':true,'digest':null}" );
+      File extStore = Environment.getExternalStorageDirectory();
+      _manager.invokePluginMethod( pluginId, "loadToFile", "{'targetFileName':'" + extStore.getAbsolutePath() + "/tmp.out','contentType':null,'followRedirects':true,'userAgent':'Mozilla/5.0 (Windows; U; en-US) AppleWebKit/533.19.4 (KHTML, like Gecko) AdobeAIR/3.4','data':null,'manageCookies':true,'requestHeaders':[],'method':'GET','cacheResponse':true,'idleTimeout':0,'authenticate':true,'url':'http://nanodroid.gameassists.co.uk/apks/saucissontest.apk','useCache':true,'digest':null}" );
       
       
     }

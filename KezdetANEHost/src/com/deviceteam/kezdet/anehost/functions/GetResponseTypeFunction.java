@@ -24,7 +24,7 @@ public class GetResponseTypeFunction extends BaseFunction implements FREFunction
     try
     {
       int pluginId = arg1[0].getAsInt();
-      returnValue = _host.getResponseType( pluginId ); 
+      returnValue = _host.get_pluginManager().getResponseType( pluginId ); 
       returnCode = HostResponseValues.OK;
     }
     catch( IndexOutOfBoundsException e )

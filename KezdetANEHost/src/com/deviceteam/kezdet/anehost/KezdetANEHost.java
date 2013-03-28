@@ -16,7 +16,6 @@ import com.deviceteam.kezdet.exception.PluginLoadException;
 import com.deviceteam.kezdet.exception.PluginVerifyException;
 import com.deviceteam.kezdet.host.PluginManager;
 import com.deviceteam.kezdet.interfaces.IPluginCallback;
-import com.deviceteam.kezdet.interfaces.exception.BadPluginException;
 
 
 public class KezdetANEHost implements FREExtension
@@ -25,6 +24,10 @@ public class KezdetANEHost implements FREExtension
   private PluginManager _manager;
   private String _jarLocation;
   
+  public PluginManager get_pluginManager()
+  {
+    return( _manager );
+  }
 
   @Override
   public FREContext createContext(String arg)
@@ -102,30 +105,5 @@ public class KezdetANEHost implements FREExtension
         }
       }
     }
-  }
-
-  public String invokePluginMethod( int pluginId, String methodName, String params ) throws IndexOutOfBoundsException, NoSuchMethodException, BadPluginException
-  {
-    return( _manager.invokePluginMethod( pluginId, methodName, params ) );
-  }
-
-  public void clearPluginData( int pluginId ) throws IndexOutOfBoundsException, BadPluginException
-  {
-    _manager.clearPluginData( pluginId );
-  }
-
-  public String getResponseType( int pluginId ) throws IndexOutOfBoundsException, BadPluginException
-  {
-    return( _manager.getResponseType( pluginId ) );
-  }
-  
-  public String getJSONResponse( int pluginId ) throws IndexOutOfBoundsException, UnsupportedOperationException, BadPluginException
-  {
-    return( _manager.getJSONResponse( pluginId ) );
-  }
-  
-  public byte[] getBinaryResponse( int pluginId ) throws IndexOutOfBoundsException, UnsupportedOperationException, BadPluginException
-  {
-    return( _manager.getBinaryResponse( pluginId ) );
   }
 }

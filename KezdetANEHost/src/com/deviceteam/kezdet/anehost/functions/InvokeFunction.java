@@ -30,7 +30,7 @@ public class InvokeFunction extends BaseFunction implements FREFunction
         params = arg1[2].getAsString();
       }
 
-      returnValue = _host.invokePluginMethod( pluginId, methodName, params );
+      returnValue = _host.get_pluginManager().invokePluginMethod( pluginId, methodName, params );
       returnCode = HostResponseValues.OK;
     }
     catch( IndexOutOfBoundsException e)

@@ -6,6 +6,24 @@
     <condition property="sdk.dir" value="${env.ANDROID_HOME}">
         <isset property="env.ANDROID_HOME" />
     </condition>
+
+    <fail message="Please set your flex.sdk.dir in your local.properties file to point to the relevant flex sdk">
+        <condition>
+            <not>
+                <available file="${flex.sdk.dir}" type="dir"/>
+            </not>
+        </condition>
+    </fail>
+
+    <property name="jar.flashruntimeextensions" value="${flex.sdk.dir}/lib/android/FlashRuntimeExtensions.jar" />
+    
+    <fail message="Your flex.sdk.dir does not contain a FlashRuntimeExtensions jar file in the lib/android dir!">
+        <condition>
+            <not>
+                <available file="${jar.flashruntimeextensions}" type="file"/>
+            </not>
+        </condition>
+    </fail>
     
     
     <!-- Standard jar stuff -->
@@ -36,6 +54,7 @@
         <fileset dir="${libs.external}" includes="**/*.jar" />
         <fileset dir="${libs.interface}" includes="**/*.jar" />
         <fileset dir="${libs.host}" includes="**/*.jar" />
+        <fileset file="${jar.flashruntimeextensions}" />
     </path>
 
     <!-- Compile java files into classes -->

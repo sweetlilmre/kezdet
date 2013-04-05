@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<project name="flexcommon" xmlns:antcontrib="antlib:net.sf.antcontrib">
+  <condition property="FLEX_HOME" value="${env.FLEX_HOME}">
+    <isset property="env.FLEX_HOME"/>
+  </condition>
+  <propertyorenvexists property="FLEX_HOME"/>
+</project>

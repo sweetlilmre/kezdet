@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<project name="common" xmlns:antcontrib="antlib:net.sf.antcontrib">
+  <!-- Override properties by defining them in the local.properties file in the working copy root -->
+  <property file="${working.dir}/local.properties" />
+
+  <!-- Load environment variables -->
+  <property environment="env"/>
+
+  <!-- Set common directory properties. -->
+  <property name="build.dir" location="${working.dir}/bin"/>
+  <dirname property="config.dir" file="${ant.file.common}"/>
+  <property name="dist.dir" location="${working.dir}/dist" />
+  <property name="log.dir" location="${working.dir}/logs"/>
+  <property name="lib.dir" location="${working.dir}/lib"/>
+  <property name="src.dir" location="${working.dir}/src"/>
+  <property name="tools.dir" location="${working.dir}/tools"/>
+  
+  <!-- Set build directory properties. -->
+  <property name="build.lib.dir" location="${build.dir}/lib"/>
+
+  <macrodef name="propertyexists">
+    <attribute name="property"/>
+    <sequential>
+      <fail unless="@{property}" message="@{property} has not been set. 
+Please set the @{property} property in local.properties file."/>
+    </sequential>
+  </macrodef>
+
+  <macrodef name="propertyorenvexists">
+    <attribute name="property"/>
+    <sequential>
+      <fail unless="@{property}" message="@{property} has not been set. 
+Please set the @{property} environment variable or set the @{property} property in local.properties file."/>
+    </sequential>
+  </macrodef>
+
+  <!-- Set the Android SDK install directory -->
+  <!-- try set using ANDROID_HOME environment variable -->
+  <condition property="ANDROID_HOME" value="${env.ANDROID_HOME}">
+    <isset property="env.ANDROID_HOME"/>
+  </condition>
+  <propertyorenvexists property="ANDROID_HOME"/>
+</project>

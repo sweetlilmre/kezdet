@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<project xmlns:antcontrib="antlib:net.sf.antcontrib">
+
+  <target name="all" depends="default,package,publish"
+          description="Builds everything and creates distribution packages.">
+  </target>
+
+
+  <target name="default" depends="clean,prepare,build,test"
+          description="clean and build">
+  </target>
+  
+
+  <target name="clean" depends="before-clean,clean-core,after-clean"
+          description="Cleans the outputs">
+  </target>
+  <target name="before-clean"/>
+  <extension-point name="clean-core"/>
+  <target name="after-clean"/>
+  
+
+  <target name="prepare" depends="before-prepare,prepare-core"
+          description="Prepares the build environment">
+  </target>
+  <target name="before-prepare"/>
+  <extension-point name="prepare-core"/>
+  
+
+  <target name="build" depends="prepare,before-build,build-core,after-build"
+          description="Compiles the sources">
+  </target>
+  <extension-point name="before-build"/>
+  <target name="build-core"/>
+  <extension-point name="after-build"/>
+
+
+  <target name="rebuild" 
+          description="Forces the build to run">
+    <antcall target="build" inheritAll="false">
+      <param name="force" value="true"/>
+      <propertyset>
+        <propertyref name="working.dir"/>
+        <propertyref name="build.dir"/>
+      </propertyset>
+    </antcall>
+  </target>
+
+
+  <target name="test" description="Tests build output"
+          depends="test-core">
+  </target>
+  <target name="before-test"/>
+  <extension-point name="test-core"/>
+  <target name="after-test"/>
+  
+  
+  <target name="package" description="Packages build artifacts"
+          depends="before-package,package-core,after-package">
+  </target>
+  <target name="before-package"/>
+  <target name="package-core"/>
+  <target name="after-package"/>
+
+
+  <target name="publish" description="Packages build artifacts"
+          depends="publish-core">
+  </target>
+  <target name="publish-core"/>
+
+  
+  <target name="view-settings">
+    <echoproperties />
+  </target>
+</project>

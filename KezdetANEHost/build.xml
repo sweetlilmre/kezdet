@@ -1,105 +1,103 @@
-<project default="package" name="KezdetANEHost">
-    <property file="local.properties"/>
-    <property file="project.properties"/>
-    <property name="verbose" value="true"/>
-    <property environment="env" />
-    <condition property="sdk.dir" value="${env.ANDROID_HOME}">
-        <isset property="env.ANDROID_HOME" />
-    </condition>
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="KezdetANEHost" default="default" xmlns:antcontrib="antlib:net.sf.antcontrib">
+  <property name="working.dir" location=".." />
+  <import file="${working.dir}/build/common.xml" />
+  <import file="${working.dir}/build/flex.common.xml" />
+  <property name="sdk.dir" value="${ANDROID_HOME}"/>
+  <dirname property="project.dir" file="${ant.file}"/>
+  <property name="project.name" value="${ant.project.name}"/>
+  <property name="target.dir" location="${build.lib.dir}"/>
+  <property name="target.name" value="${project.name}.jar"/>
 
-    <fail message="Please set your flex.sdk.dir in your local.properties file to point to the relevant flex sdk">
-        <condition>
-            <not>
-                <available file="${flex.sdk.dir}" type="dir"/>
-            </not>
-        </condition>
-    </fail>
+  
+  <!-- The ant.properties file can be created by you. It is only edited by the
+       'android' tool to add properties to it.
+       This is the place to change some Ant specific build properties.
+       Here are some properties you may want to change/update:
 
-    <property name="jar.flashruntimeextensions" value="${flex.sdk.dir}/lib/android/FlashRuntimeExtensions.jar" />
-    
-    <fail message="Your flex.sdk.dir does not contain a FlashRuntimeExtensions jar file in the lib/android dir!">
-        <condition>
-            <not>
-                <available file="${jar.flashruntimeextensions}" type="file"/>
-            </not>
-        </condition>
-    </fail>
-    
-    
-    <!-- Standard jar stuff -->
-    <condition property="android.base" value="${sdk.dir}" else="${env.ANDROID_HOME}">
-      <isset property="sdk.dir" />
-    </condition>
-    <fail message="Please set either the sdk.dir property or the ANDROID_HOME environment variable to point to your Android SDK installation.">
-      <condition>
-        <not>
-          <available file="${android.base}" type="dir"/>
-        </not>
-      </condition>
-    </fail>
+       source.dir
+           The name of the source directory. Default is 'src'.
+       out.dir
+           The name of the output directory. Default is 'bin'.
 
-    <property name="libs.android" value="${android.base}/platforms/${target}" />
-    <property name="libs.external" value="../KezdetLibs/libs" />
+       For other overridable properties, look at the beginning of the rules
+       files in the SDK, at tools/ant/build.xml
 
-    <property name="libs.interface" value="../KezdetInterface/bin" />
-    <property name="libs.host" value="../KezdetHostLib/bin" />
-    
-    
-    <property name="build.dir" value="./bin"/>
-    <property name="classes.dir"  value="${build.dir}/classes"/>
+       Properties related to the SDK location or the project target should
+       be updated using the 'android' tool with the 'update' action.
 
-    <!-- Set up classpath -->
-    <path id="classpath">
-        <fileset dir="${libs.android}" includes="**/*.jar" />
-        <fileset dir="${libs.external}" includes="**/*.jar" />
-        <fileset dir="${libs.interface}" includes="**/*.jar" />
-        <fileset dir="${libs.host}" includes="**/*.jar" />
-        <fileset file="${jar.flashruntimeextensions}" />
-    </path>
+       This file is an integral part of the build system for your
+       application and should be checked into Version Control Systems.
 
-    <!-- Compile java files into classes -->
-    <target name="compile">
-        <mkdir dir="${build.dir}" />
-        <mkdir dir="${classes.dir}" />
+       -->
+  <property file="${project.dir}/ant.properties" />
 
-        <javac
-            includeantruntime="false"
-            srcdir="."
-            destdir="${classes.dir}"
-            classpathref="classpath"
-            debug="true"
-            verbose="${verbose}"
-            debuglevel="lines,source" />
+  <!-- The project.properties file is created and updated by the 'android'
+       tool, as well as ADT.
+
+       This contains project specific properties such as project target, and library
+       dependencies. Lower level build properties are stored in ant.properties
+       (or in .classpath for Eclipse projects).
+
+       This file is an integral part of the build system for your
+       application and should be checked into Version Control Systems. -->
+  <loadproperties srcFile="project.properties" />
+
+  <!-- quick check on sdk.dir -->
+  <fail message="sdk.dir is missing. Make sure to generate local.properties using 'android update project' or to inject it through an env var"
+        unless="sdk.dir"/>
+
+  <!-- <property name="jar.libs.dir" location="${FLEX_HOME}/lib/android"/> -->
+  
+  <!-- extension targets. Uncomment the ones where you want to do custom work
+     in between standard targets -->
+  <!--
+    <target name="-pre-build">
+    </target>
+    <target name="-pre-compile">
     </target>
 
-    <!-- Package a jar from compiled class files -->
-    <target name="jar" depends="compile">
-        <delete dir="${build.dir}" includes="**/*.jar" />
-        <delete file="${build.dir}/MANIFEST.MF" />
-        <manifest file="${build.dir}/MANIFEST.MF">
-            <attribute name="Built-By" value="${user.name}" />
-            <attribute name="Implementation-Version" value="${package.versionname}"/> 
-        </manifest>
+    /* This is typically used for code obfuscation.
+       Compiled code location: ${out.classes.absolute.dir}
+       If this is not done in place, override ${out.dex.input.absolute.dir} */
+       -->
 
-        <jar destfile="${build.dir}/KezdetANEHost.jar"
-            basedir="${classes.dir}"
-            manifest="${build.dir}/MANIFEST.MF">
-            <fileset dir="${classes.dir}" includes="./**/*.class" />
-            <zipgroupfileset dir="${libs.external}" includes="**/gson*.jar" />
-            <zipgroupfileset dir="${libs.interface}" includes="**/*.jar" />
-            <zipgroupfileset dir="${libs.host}" includes="**/*.jar" />
-        </jar>
+    <target name="-pre-compile">
+      <augment id="project.all.jars.path" path="${FLEX_HOME}/lib/android/FlashRuntimeExtensions.jar" />
     </target>
 
-    <!-- Clean out the build files -->
-    <target name="clean">
-        <delete dir="${classes.dir}" />
-        <delete>
-            <fileset dir="${build.dir}" includes="*.jar"/>
-            <fileset file="${build.dir}/MANIFEST.MF"/>
-        </delete>
+    <target name="-post-compile">
+      <!-- <copy file="${out.library.jar.file}" tofile="${target.dir}/${target.name}"/> -->
+      <jar destfile="${target.dir}/${target.name}">
+        <fileset dir="${out.classes.absolute.dir}" includes="**/*.class" />
+        <zipgroupfileset dir="${lib.dir}" includes="**/*.jar" />
+        <zipgroupfileset dir="${build.lib.dir}" includes="**/*.jar" />
+      </jar>
     </target>
 
-    <!-- Compile and package a jar -->
-    <target name="package" depends="clean,compile,jar" />
+
+    <!-- Import the actual build file.
+
+       To customize existing targets, there are two options:
+       - Customize only one target:
+           - copy/paste the target into this file, *before* the
+             <import> task.
+           - customize it to your needs.
+       - Customize the whole content of build.xml
+           - copy/paste the content of the rules files (minus the top node)
+             into this file, replacing the <import> task.
+           - customize to your needs.
+
+       ***********************
+       ****** IMPORTANT ******
+       ***********************
+       In all cases you must update the value of version-tag below to read 'custom' instead of an integer,
+       in order to avoid having your file be overridden by tools such as "android update project"
+       -->
+  <!-- version-tag: 1 -->
+  <import file="${sdk.dir}/tools/ant/build.xml" />
+
+  <target name="view-settings">
+    <echoproperties />
+  </target>
 </project>

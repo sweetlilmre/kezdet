@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="utf-8"?>
+<project name="AIRTestApp" default="default" xmlns:antcontrib="antlib:net.sf.antcontrib">
+  <property name="working.dir" location=".." />
+  <import file="${working.dir}/build/common.xml" />
+  <import file="${working.dir}/build/flex.common.xml" />
+  <property name="project.build.dir" location="bin"/>
+  <property name="project.log.dir" location="logs"/>
+  <property name="project.name" value="${ant.project.name}"/>
+
+  <property name="source.dir" location="src"/>
+
+  <property name="target.dir" location="${build.dir}"/>
+  <property name="target.swf.name" value="testANE.swf"/>
+  <property name="target.apk.name" value="${project.name}.apk"/>
+  <property name="target.apk.path" value="${target.dir}/${target.apk.name}"/>
+  
+  
+  <target name="clean-working-dirs" extensionOf="clean-core">
+    <delete dir="${project.build.dir}" failonerror="false"/>
+    <delete dir="${project.log.dir}" failonerror="false"/>
+  </target>
+
+  <target name="prepare-working-dirs" extensionOf="prepare-core">
+    <mkdir dir="${project.build.dir}"/>
+    <mkdir dir="${project.log.dir}"/>
+  </target>
+
+  <!-- The Location of flex compilers on your Computer -->
+  <property name="flex.binaryPath" location="${FLEX_HOME}/bin"/>
+  
+  <!-- path to the flex task libraries. -->
+  <typedef resource="flexTasks.tasks">
+    <classpath>
+      <fileset dir="${FLEX_HOME}/ant/lib" includes="*.jar"/>
+    </classpath>
+  </typedef>
+  
+  <target name="build-core">
+    <mxmlc file="${source.dir}/testANE.mxml" output="${project.build.dir}/${target.swf.name}">
+      <load-config>${FLEX_HOME}/frameworks/air-config.xml</load-config>
+      <dump-config>${project.log.dir}/${target.swf.name}-config.xml</dump-config>
+      <link-report>${project.log.dir}/${target.swf.name}.xml</link-report>
+      <!-- <debug>${project.debug}</debug> -->
+      <incremental>true</incremental>
+      <locale>en_US</locale>
+      <mobile>true</mobile>
+      <optimize>true</optimize>
+      <static-link-runtime-shared-libraries>true</static-link-runtime-shared-libraries>
+      <!-- <swf-version>17</swf-version> -->
+      <!-- <source-path path-element="src"/> -->
+      <include-libraries dir="${build.dir}">
+         <include name="KezdetHost.swc" />
+      </include-libraries>
+    </mxmlc>
+  </target>
+
+  <target name="copy-ane" extensionOf="before-build">
+    <copy todir="${project.build.dir}/ane">
+      <fileset dir="${build.dir}" includes="*.ane"/>
+    </copy>
+  </target>
+  
+  <target name="package-apk" extensionOf="after-build">
+    <echo>Packaging ${target.apk.path}</echo>
+    <propertyexists property="ane.key.store"/>
+    <propertyexists property="ane.store.pass"/>
+
+    <java jar="${FLEX_HOME}/lib/adt.jar" dir="${project.build.dir}" fork="true" failonerror="true">
+      <arg value="-package" />
+
+      <arg line="-target apk-captive-runtime" />
+
+      <arg line="-storetype pkcs12" />
+      <arg value="-keystore" />
+      <arg value="${working.dir}/KezdetAIRHost/${ane.key.store}" />
+      <arg value="-storepass" />
+      <arg value="${ane.store.pass}" />
+
+      <!-- output file -->
+      <arg value="${target.apk.path}" />
+
+      <!-- app descriptor file -->
+      <arg value="${source.dir}/testANE-app.xml" />
+      <!-- app entry point -->
+      <arg line="-C ." />
+      <arg value="${target.swf.name}" />
+
+      <arg value="-extdir" />
+      <arg value="ane" />
+    </java>
+  </target>
+  <import file="${config.dir}/build.process.xml"/>
+</project>

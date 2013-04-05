@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
-<project name="KezdetAIRHost" default="default" xmlns:antcontrib="antlib:net.sf.antcontrib">
+<project name="KezdetANE" default="default" xmlns:antcontrib="antlib:net.sf.antcontrib">
   <property name="working.dir" location=".." />
   <import file="${working.dir}/build/common.xml" />
   <import file="${working.dir}/build/flex.common.xml" />
-  <dirname property="project.dir" file="${ant.file}"/>
-  <property name="project.name" value="${ant.project.name}"/>
-  <property name="target.dir" location="${build.lib.dir}"/>
-  <property name="target.name" value="${project.name}.swc"/>
-  <property name="target.path" value="${build.dir}/${project.name}.ane"/>
-  
+  <property name="project.name" value="KezdetHost"/>
   <property name="project.build.dir" location="bin"/>
+  <property name="target.dir" location="${build.dir}"/>
+  <property name="target.swc.name" value="${project.name}.swc"/>
+  <property name="target.swc.path" value="${project.build.dir}/${target.swc.name}"/>
+  <property name="target.ane.name" value="${project.name}.ane"/>
+  <property name="target.ane.path" value="${target.dir}/${target.ane.name}"/>
   
   
   <target name="clean-working-dirs" extensionOf="clean-core">
@@ -31,10 +31,10 @@
   </typedef>
   
   <target name="build-core">
-    <compc output="${project.build.dir}/${target.name}">
+    <compc output="${target.swc.path}">
       <load-config>${FLEX_HOME}/frameworks/air-config.xml</load-config>
-      <dump-config>${log.dir}/${target.name}-config.xml</dump-config>
-      <link-report>${log.dir}/${target.name}.xml</link-report>
+      <dump-config>${log.dir}/${target.swc.name}-config.xml</dump-config>
+      <link-report>${log.dir}/${target.swc.name}.xml</link-report>
       <!-- <debug>${project.debug}</debug> -->
       <incremental>true</incremental>
       <mobile>true</mobile>
@@ -48,21 +48,22 @@
         <include name="**/*.as"/>
       </include-sources>
     </compc>
+    <copy file="${target.swc.path}" tofile="${build.dir}/${target.swc.name}"/>
   </target>
 
   <target name="package-ane" extensionOf="after-build">
-    <unzip src="${project.build.dir}/${target.name}"
+    <unzip src="${target.swc.path}"
            dest="${project.build.dir}">
       <patternset>
         <include name="library.swf"/>
       </patternset>
     </unzip>
     
+    <copy file="${build.dir}/KezdetHost.jar" todir="${project.build.dir}/android"/>
     <copy file="${project.build.dir}/library.swf" todir="${project.build.dir}/default"/>
     <copy file="${project.build.dir}/library.swf" todir="${project.build.dir}/android"/>
-    <copy file="${build.lib.dir}/KezdetANEHost.jar" todir="${project.build.dir}/android"/>
     
-    <echo>Packaging ${target.path}</echo>
+    <echo>Packaging ${target.ane.path}</echo>
     <propertyexists property="ane.key.store"/>
     <propertyexists property="ane.store.pass"/>
 
@@ -80,14 +81,14 @@
       <arg line="-target ane" />
 
       <!-- target file -->
-      <arg value="${target.path}" />
+      <arg value="${target.ane.path}" />
 
       <!-- extension descriptor file -->
       <arg value="extension.xml" />
 
       <!-- wrapper swc -->
       <arg value="-swc" />
-      <arg value="${project.build.dir}/${target.name}" />
+      <arg value="${target.dir}/${target.swc.name}" />
 
       <arg line="-platform Android-ARM" />
       <arg line="-C ${project.build.dir}/android ." />

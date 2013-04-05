@@ -18,7 +18,6 @@
   <target name="clean-projects" extensionOf="clean-core">
     <subant target="clean">
       <fileset dir="${basedir}">
-        <exclude name="KezdetTestDex/build.xml"/>
         <include name="*/build.xml"/>
       </fileset>
       <propertyset refid="build.properties"/>
@@ -32,27 +31,39 @@
   </target>
 
   <target name="build-core" 
-          depends="KezdetInterface,
-                   KezdetHostLib,
-                   KezdetANEHost,
-                   KezdetAIRHost">
+          depends="build-kezdet,build-tests">
   </target>
+
+  <target name="build-kezdet" depends="KezdetANE"/>
+  <target name="build-tests" depends="TestPlugin,AIRTestApp"/>
   
   
-  <target name="KezdetInterface">
+  <target name="KezdetPluginLib">
     <delegatebuild project="KezdetInterface" target="release"/>
   </target>
 
-  <target name="KezdetHostLib" depends="KezdetInterface">
+  <target name="KezdetHostLib" depends="KezdetPluginLib">
     <delegatebuild project="KezdetHostLib" target="release"/>
   </target>
   
-  <target name="KezdetANEHost" depends="KezdetHostLib">
+  <target name="KezdetANEExtension" depends="KezdetHostLib">
     <delegatebuild project="KezdetANEHost" target="release"/>
   </target>
   
-  <target name="KezdetAIRHost">
+  <target name="KezdetANE" depends="KezdetANEExtension">
     <delegatebuild project="KezdetAIRHost" target="build"/>
+  </target>
+
+  <target name="TestPlugin" depends="KezdetPluginLib">
+    <delegatebuild project="KezdetTestDex" target="build"/>
+  </target>
+  
+  <target name="AndroidTestApp" depends="KezdetHostLib">
+    <delegatebuild project="KezdetTestHost" target="release"/>
+  </target>
+  
+  <target name="AIRTestApp" depends="KezdetANE">
+    <delegatebuild project="TestKezdetAIRHost" target="build"/>
   </target>
   
   <macrodef name="delegatebuild">
@@ -64,17 +75,6 @@
       </ant>
    </sequential>
   </macrodef>
-  <!-- <target name="KezdetTestDex" depends="KezdetInterface">
-    <echo>KezdetTestDex</echo>
-  </target>
-  
-  <target name="KezdetTestHost" depends="KezdetTestDex">
-    <echo>KezdetTestHost</echo>
-  </target>
-  
-  <target name="TestKezdetAIRHost" depends="KezdetANEHost,KezdetAIRHost">
-    <echo>TestKezdetAIRHost</echo>
-  </target> -->
 
   <import file="${working.dir}/build/build.process.xml" />
 </project>

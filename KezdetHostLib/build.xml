@@ -2,12 +2,11 @@
 <project name="KezdetHostLib" default="default" xmlns:antcontrib="antlib:net.sf.antcontrib">
   <!-- <property name="working.dir" location=".." /> -->
   <import file="${working.dir}/build/common.xml" />
-  <property name="sdk.dir" value="${ANDROID_HOME}"/>
-  <dirname property="project.dir" file="${ant.file}"/>
   <property name="project.name" value="${ant.project.name}"/>
-  <property name="target.dir" location="${build.lib.dir}"/>
+  <property name="target.dir" location="${build.dir}"/>
   <property name="target.name" value="${project.name}.jar"/>
 
+  <property name="sdk.dir" value="${ANDROID_HOME}"/>
   
   <!-- The ant.properties file can be created by you. It is only edited by the
        'android' tool to add properties to it.
@@ -29,7 +28,7 @@
        application and should be checked into Version Control Systems.
 
        -->
-  <property file="${project.dir}/ant.properties" />
+  <property file="ant.properties" />
 
   <!-- The project.properties file is created and updated by the 'android'
        tool, as well as ADT.

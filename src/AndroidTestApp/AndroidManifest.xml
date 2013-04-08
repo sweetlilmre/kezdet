@@ -16,8 +16,8 @@
         android:label="@string/app_name"
         android:theme="@style/AppTheme" >
         <activity
-            android:name="com.deviceteam.kezdet.KezdetHostActivity"
-            android:label="@string/title_activity_kezdet_host" >
+            android:name="com.deviceteam.kezdet.AndroidTestAppActivity"
+            android:label="@string/title_activity_android_test_app" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

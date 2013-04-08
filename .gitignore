@@ -1,6 +1,10 @@
 # built application files
 *.apk
 *.ap_
+*.jar
+
+src/AndroidTestApp/assets/certificates/kezdet-public-test-certificate.cer
+
 
 # files for the dex VM
 *.dex

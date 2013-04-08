@@ -1,15 +1,12 @@
 package com.deviceteam.kezdet;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 
 import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
-import android.os.Environment;
 import android.util.Log;
-import android.view.Menu;
 import android.widget.TextView;
 
 import com.deviceteam.kezdet.exception.PluginCreateException;
@@ -20,16 +17,16 @@ import com.deviceteam.kezdet.interfaces.IPluginCallback;
 import com.deviceteam.kezdet.interfaces.exception.BadPluginException;
 import com.google.gson.Gson;
 
-public class KezdetHostActivity extends Activity
+public class AndroidTestAppActivity extends Activity
 {
-  public static String TAG = "KezdetHostActivity";
+  public static String TAG = "AndroidTestAppActivity";
   private Gson _gson = new Gson();
 
   @Override
   public void onCreate( Bundle savedInstanceState )
   {
     super.onCreate( savedInstanceState );
-    setContentView( R.layout.activity_kezdet_host );
+    setContentView( R.layout.activity_android_test_app );
 
     Context context = getApplicationContext();
 
@@ -39,13 +36,12 @@ public class KezdetHostActivity extends Activity
     
     try
     {
-      is = context.getAssets().open( "certificates/kezdet-public.cer" );
-      _manager.init( context, this, KezdetHostActivity.class.getClassLoader(), is );
+      is = context.getAssets().open( "certificates/kezdet-public-test-certificate.cer" );
+      _manager.init( context, this, AndroidTestAppActivity.class.getClassLoader(), is );
       is.close();
       
-      is = context.getAssets().open( "KezdetTestDex.jar" );
+      is = context.getAssets().open( "TestPlugin.jar" );
       
-      /*
       pluginId = _manager.loadPlugin( is, "com.deviceteam.kezdet.plugin.KezdetPlugin" );
       _manager.initPlugin( pluginId, new IPluginCallback()
       {
@@ -58,28 +54,8 @@ public class KezdetHostActivity extends Activity
       is.close();
  
       String battLevel = _manager.invokePluginMethod( pluginId, "batteryLevel", "1000000" );
-      Log.d( TAG, "Battery Level is: " + battLevel );
-      */
-      
-      is = context.getAssets().open( "KezdetURLLoaderE.jar" );
-      
-      pluginId = _manager.loadPlugin( is, "com.deviceteam.networking.URLLoaderPlugin" );
-      _manager.initPlugin( pluginId, new IPluginCallback()
-      {
-        @Override
-        public void onPluginCallback( String message, String param )
-        {
-          DisplayResult( message, param );
-        }
-      } );
-      is.close();
-
-
-      _manager.invokePluginMethod( pluginId, "init", _gson.toJson( Integer.valueOf( 1 ) ) );
-      File extStore = Environment.getExternalStorageDirectory();
-      _manager.invokePluginMethod( pluginId, "loadToFile", "{'targetFileName':'" + extStore.getAbsolutePath() + "/tmp.out','contentType':null,'followRedirects':true,'userAgent':'Mozilla/5.0 (Windows; U; en-US) AppleWebKit/533.19.4 (KHTML, like Gecko) AdobeAIR/3.4','data':null,'manageCookies':true,'requestHeaders':[],'method':'GET','cacheResponse':true,'idleTimeout':0,'authenticate':true,'url':'http://nanodroid.gameassists.co.uk/apks/saucissontest.apk','useCache':true,'digest':null}" );
-      
-      
+      int batt = _gson.fromJson( battLevel, Integer.class );
+      Log.d( TAG, "Battery Level is: " + batt );
     }
     catch( PluginVerifyException e )
     {
@@ -124,12 +100,6 @@ public class KezdetHostActivity extends Activity
     }
   }
 
-  @Override
-  public boolean onCreateOptionsMenu( Menu menu )
-  {
-    getMenuInflater().inflate( R.menu.activity_kezdet_host, menu );
-    return true;
-  }
 
   public void DisplayResult( String arg0, String arg1 )
   {

@@ -64,6 +64,7 @@
     <echo>Packaging ${target.apk.path}</echo>
     <propertyexists property="testapp.key.store"/>
     <propertyexists property="testapp.key.storepass"/>
+    <copy file="${plugin.key.public}" todir="${project.build.dir}/certificates"/>
 
     <java jar="${FLEX_HOME}/lib/adt.jar" dir="${project.build.dir}" fork="true" failonerror="true">
       <arg value="-package" />
@@ -84,7 +85,8 @@
       <!-- app entry point -->
       <arg line="-C ." />
       <arg value="${target.swf.name}" />
-
+      <arg value="certificates" />
+      
       <arg value="-extdir" />
       <arg value="ane" />
     </java>

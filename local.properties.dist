@@ -1,26 +1,38 @@
-# example local.properties file
-
 # path to the Flex SDK
-FLEX_HOME=C:/FlexSDK/air3.4
+FLEX_HOME=C:/Flex/Air3.4
+
+############################################################################################
+# Test appliction signing certificate
+############################################################################################
 
 # p12 for signing the test applications
-testapp.key.store=../cert/test-certificate.p12
+testapp.key.store=../cert/kezdet-test-certificate.p12
 # password for the above
 testapp.key.storepass=test
 # alias to use in the keystore
 testapp.key.alias=1
 
+############################################################################################
+# ANE signing certificate
+############################################################################################
+
 # p12 for signing the ANE
-ane.key.store=../cert/test-certificate.p12
+ane.key.store=../cert/kezdet-test-certificate.p12
 # password for the above
 ane.key.storepass=test
 # alias to use in the keystore
 ane.key.alias=1
 
 
+############################################################################################
+# plugin(s) signing certificate and public certificate
+############################################################################################
+
 # keystore for signing plugins
-plugin.key.store=../cert/test-certificate.p12
+plugin.key.store=../cert/kezdet-test-certificate.p12
 # password for the keystore
 plugin.key.storepass=test
 # alias to use in the keystore
 plugin.key.alias=1
+# public certificate for verification
+plugin.key.public=../cert/kezdet-public-test-certificate.cer

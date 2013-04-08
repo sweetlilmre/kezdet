@@ -18,6 +18,8 @@
 
   <target name="-pre-compile">
     <augment id="project.target.class.path" path="${lib.dir}/gson-2.2.2.jar" />
+    <copy file="${plugin.key.public}" todir="${project.dir}/assets/certificates" />
+    <copy file="${build.dir}/TestPlugin.jar" todir="${project.dir}/assets" />
   </target>
 
   <!-- overriding Android defaults so we can sign with p12 and reduce noise -->

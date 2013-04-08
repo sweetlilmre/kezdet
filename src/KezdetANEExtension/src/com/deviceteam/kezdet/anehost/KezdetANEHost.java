@@ -54,7 +54,7 @@ public class KezdetANEHost implements FREExtension
     InputStream certificateStream = null;
     try
     {
-      certificateStream = context.getAssets().open( "certificates/kezdet-public.cer" );
+      certificateStream = context.getAssets().open( "certificates/kezdet-public-test-certificate.cer" );
       _manager.init( context, activity, parentClassloader, certificateStream );
     }
     finally

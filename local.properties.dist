@@ -1,0 +1,3 @@
+FLEX_HOME=C:/FlexSDK/air3.4
+ane.key.store=signer.p12
+ane.store.pass=test

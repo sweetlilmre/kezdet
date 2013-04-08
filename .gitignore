@@ -16,6 +16,7 @@ src/AndroidTestApp/assets/certificates/kezdet-public-test-certificate.cer
 bin/
 gen/
 logs/
+dist/
 
 # Local configuration file (sdk path, etc)
 local.properties

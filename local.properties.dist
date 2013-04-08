@@ -1,3 +1,26 @@
+# example local.properties file
+
+# path to the Flex SDK
 FLEX_HOME=C:/FlexSDK/air3.4
-ane.key.store=signer.p12
-ane.store.pass=test
+
+# p12 for signing the test applications
+testapp.key.store=../cert/test-certificate.p12
+# password for the above
+testapp.key.storepass=test
+# alias to use in the keystore
+testapp.key.alias=1
+
+# p12 for signing the ANE
+ane.key.store=../cert/test-certificate.p12
+# password for the above
+ane.key.storepass=test
+# alias to use in the keystore
+ane.key.alias=1
+
+
+# keystore for signing plugins
+plugin.key.store=../cert/test-certificate.p12
+# password for the keystore
+plugin.key.storepass=test
+# alias to use in the keystore
+plugin.key.alias=1

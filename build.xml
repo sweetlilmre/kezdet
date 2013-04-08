@@ -18,7 +18,7 @@
   <target name="clean-projects" extensionOf="clean-core">
     <subant target="clean">
       <fileset dir="${basedir}">
-        <include name="*/build.xml"/>
+        <include name="src/*/build.xml"/>
       </fileset>
       <propertyset refid="build.properties"/>
     </subant>
@@ -35,7 +35,7 @@
   </target>
 
   <target name="build-kezdet" depends="KezdetANE"/>
-  <target name="build-tests" depends="TestPlugin,AirTestApp"/>
+  <target name="build-tests" depends="TestPlugin,AirTestApp,AndroidTestApp"/>
   
   
   <target name="KezdetPluginLib">
@@ -59,7 +59,7 @@
   </target>
   
   <target name="AndroidTestApp" depends="KezdetHostLib">
-    <delegatebuild project="KezdetTestHost" target="release"/>
+    <delegatebuild project="src/AndroidTestApp" target="release"/>
   </target>
   
   <target name="AirTestApp" depends="KezdetANE">

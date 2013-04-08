@@ -62,8 +62,8 @@
   
   <target name="package-apk" extensionOf="after-build">
     <echo>Packaging ${target.apk.path}</echo>
-    <propertyexists property="ane.key.store"/>
-    <propertyexists property="ane.store.pass"/>
+    <propertyexists property="testapp.key.store"/>
+    <propertyexists property="testapp.key.storepass"/>
 
     <java jar="${FLEX_HOME}/lib/adt.jar" dir="${project.build.dir}" fork="true" failonerror="true">
       <arg value="-package" />
@@ -72,9 +72,9 @@
 
       <arg line="-storetype pkcs12" />
       <arg value="-keystore" />
-      <arg value="${working.dir}/src/KezdetANE/${ane.key.store}" />
+      <arg value="../${testapp.key.store}" />
       <arg value="-storepass" />
-      <arg value="${ane.store.pass}" />
+      <arg value="${testapp.key.storepass}" />
 
       <!-- output file -->
       <arg value="${target.apk.path}" />

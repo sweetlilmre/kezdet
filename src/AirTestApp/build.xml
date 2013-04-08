@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<project name="AIRTestApp" default="default" xmlns:antcontrib="antlib:net.sf.antcontrib">
+<project name="AirTestApp" default="default" xmlns:antcontrib="antlib:net.sf.antcontrib">
   <property name="working.dir" location=".." />
   <import file="${working.dir}/build/common.xml" />
   <import file="${working.dir}/build/flex.common.xml" />
@@ -72,7 +72,7 @@
 
       <arg line="-storetype pkcs12" />
       <arg value="-keystore" />
-      <arg value="${working.dir}/KezdetAIRHost/${ane.key.store}" />
+      <arg value="${working.dir}/src/KezdetANE/${ane.key.store}" />
       <arg value="-storepass" />
       <arg value="${ane.store.pass}" />
 

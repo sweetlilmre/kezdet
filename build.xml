@@ -35,35 +35,35 @@
   </target>
 
   <target name="build-kezdet" depends="KezdetANE"/>
-  <target name="build-tests" depends="TestPlugin,AIRTestApp"/>
+  <target name="build-tests" depends="TestPlugin,AirTestApp"/>
   
   
   <target name="KezdetPluginLib">
-    <delegatebuild project="KezdetInterface" target="release"/>
+    <delegatebuild project="src/KezdetPluginLib" target="release"/>
   </target>
 
   <target name="KezdetHostLib" depends="KezdetPluginLib">
-    <delegatebuild project="KezdetHostLib" target="release"/>
+    <delegatebuild project="src/KezdetHostLib" target="release"/>
   </target>
   
   <target name="KezdetANEExtension" depends="KezdetHostLib">
-    <delegatebuild project="KezdetANEHost" target="release"/>
+    <delegatebuild project="src/KezdetANEExtension" target="release"/>
   </target>
   
   <target name="KezdetANE" depends="KezdetANEExtension">
-    <delegatebuild project="KezdetAIRHost" target="build"/>
+    <delegatebuild project="src/KezdetANE" target="build"/>
   </target>
 
   <target name="TestPlugin" depends="KezdetPluginLib">
-    <delegatebuild project="KezdetTestDex" target="build"/>
+    <delegatebuild project="src/TestPlugin" target="build"/>
   </target>
   
   <target name="AndroidTestApp" depends="KezdetHostLib">
     <delegatebuild project="KezdetTestHost" target="release"/>
   </target>
   
-  <target name="AIRTestApp" depends="KezdetANE">
-    <delegatebuild project="TestKezdetAIRHost" target="build"/>
+  <target name="AirTestApp" depends="KezdetANE">
+    <delegatebuild project="src/AirTestApp" target="build"/>
   </target>
   
   <macrodef name="delegatebuild">

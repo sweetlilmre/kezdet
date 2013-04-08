@@ -2,24 +2,17 @@
 <project name="KezdetPluginLib" default="default" xmlns:antcontrib="antlib:net.sf.antcontrib">
   <property name="working.dir" location="../.." />
   <import file="${working.dir}/build/common.xml" />
+
   <property name="project.name" value="${ant.project.name}"/>
   <property name="target.dir" location="${build.dir}"/>
   <property name="target.name" value="${project.name}.jar"/>
 
-  <property name="sdk.dir" value="${ANDROID_HOME}"/>
   
-  <property file="${project.dir}/ant.properties" />
-  <loadproperties srcFile="project.properties" />
-
-  <!-- quick check on sdk.dir -->
-  <fail message="sdk.dir is missing. Make sure to generate local.properties using 'android update project' or to inject it through an env var"
-        unless="sdk.dir"/>
-
   <target name="-post-compile">
     <!-- make this friendly for eclipse by copying the jar to the expected reference name if the user is mixing ant / eclipse builds -->
     <copy file="${out.library.jar.file}" tofile="${out.absolute.dir}/${project.name}.jar" />
     <copy file="${out.library.jar.file}" tofile="${target.dir}/${target.name}"/>
   </target>
 
-  <import file="${sdk.dir}/tools/ant/build.xml" />
+  <import file="${working.dir}/build/android.project.xml" />
 </project>

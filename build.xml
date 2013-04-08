@@ -1,34 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <project name="kezdet" default="default" xmlns:antcontrib="antlib:net.sf.antcontrib">
   <property name="working.dir" location="${basedir}" />
-  <import file="${working.dir}/build/common.xml" />
-
-  <property name="dont.do.deps" value="true"/>
-  <propertyset id="build.properties">
-    <propertyref name="working.dir"/>
-    <propertyref name="dont.do.deps"/>
-  </propertyset>
-
-  <target name="clean-working-dirs" extensionOf="clean-core">
-    <delete dir="${build.dir}" failonerror="false"/>
-    <delete dir="${log.dir}" failonerror="false"/>
-    <delete dir="${dist.dir}" failonerror="false"/>
-  </target>
-  
-  <target name="clean-projects" extensionOf="clean-core">
-    <subant target="clean">
-      <fileset dir="src">
-        <include name="*/build.xml"/>
-      </fileset>
-      <propertyset refid="build.properties"/>
-    </subant>
-  </target>
-
-  <target name="prepare-working-dirs" extensionOf="prepare-core">
-    <mkdir dir="${build.dir}"/>
-    <mkdir dir="${log.dir}"/>
-    <mkdir dir="${dist.dir}"/>
-  </target>
 
   <target name="build-core" 
           depends="build-kezdet,build-tests">
@@ -39,23 +11,25 @@
   
   
   <target name="KezdetPluginLib">
-    <delegatebuild project="src/KezdetPluginLib" target="release"/>
+    <delegatebuild project="src/KezdetPluginLib"/>
   </target>
 
   <target name="KezdetHostLib" depends="KezdetPluginLib">
-    <delegatebuild project="src/KezdetHostLib" target="release"/>
+    <delegatebuild project="src/KezdetHostLib"/>
   </target>
   
   <target name="KezdetANEExtension" depends="KezdetHostLib">
-    <delegatebuild project="src/KezdetANEExtension" target="release"/>
+    <delegatebuild project="src/KezdetANEExtension"/>
   </target>
   
   <target name="KezdetANE" depends="KezdetANEExtension">
-    <delegatebuild project="src/KezdetANE" target="build"/>
+    <delegatebuild project="src/KezdetANE">
+      <target name="package"/>
+    </delegatebuild>
   </target>
 
   <target name="TestPlugin" depends="KezdetPluginLib">
-    <delegatebuild project="src/TestPlugin" target="build"/>
+    <delegatebuild project="src/TestPlugin"/>
   </target>
   
   <target name="AndroidTestApp" depends="KezdetHostLib">
@@ -63,28 +37,10 @@
   </target>
   
   <target name="AirTestApp" depends="KezdetANE">
-    <delegatebuild project="src/AirTestApp" target="build"/>
+    <delegatebuild project="src/AirTestApp">
+      <target name="package"/>
+    </delegatebuild>
   </target>
-  
-  <target name="package-core">
-    <copy todir="${dist.dir}">
-      <fileset dir="${build.dir}">
-        <include name="Kezdet*Lib.jar"/>
-        <include name="KezdetHost.swc"/>
-        <include name="KezdetHost.ane"/>
-      </fileset>
-    </copy>
-  </target>
-  
-  <macrodef name="delegatebuild">
-   <attribute name="project"/>
-   <attribute name="target" default="build"/>
-   <sequential>
-      <ant dir="@{project}" target="@{target}" inheritAll="false">
-        <propertyset refid="build.properties"/>
-      </ant>
-   </sequential>
-  </macrodef>
 
-  <import file="${working.dir}/build/build.process.xml" />
+  <import file="${working.dir}/build/master.build.xml" />
 </project>

@@ -3,32 +3,23 @@
   <property name="working.dir" location=".." />
   <import file="${working.dir}/build/common.xml" />
   <import file="${working.dir}/build/flex.common.xml" />
-  <property name="sdk.dir" value="${ANDROID_HOME}"/>
-  <dirname property="project.dir" file="${ant.file}"/>
+
   <property name="project.name" value="${ant.project.name}"/>
   <property name="target.dir" location="${build.dir}"/>
   <property name="target.name" value="${project.name}.jar"/>
 
-  <property file="${project.dir}/ant.properties" />
-  <loadproperties srcFile="project.properties" />
 
-  <!-- quick check on sdk.dir -->
-  <fail message="sdk.dir is missing. Make sure to generate local.properties using 'android update project' or to inject it through an env var"
-        unless="sdk.dir"/>
-
-  <target name="-pre-compile">
+  <target name="-pre-compile" depends="-pre-compile-dependset">
     <augment id="project.all.jars.path" path="${lib.dir}/gson-2.2.2.jar" />
-    
-    <copy file="${plugin.key.public}" todir="${project.dir}/assets/certificates" />
-    <copy file="${build.dir}/TestPlugin.jar" todir="${project.dir}/assets" />
   </target>
 
+  <target name="-post-compile">
+    <copy file="${plugin.key.public}" todir="assets/certificates" />
+    <copy file="${build.dir}/TestPlugin.jar" todir="assets" />
+  </target>
+
+ 
   <!-- overriding Android defaults so we can sign with p12 and reduce noise -->
-  <target name="-release-sign">
-  </target>
-  <target name="-release-nosign">
-  </target>
-  
   <target name="-post-build">
     <!-- Signs the APK -->
     <property name="out.unaligned.file" location="${out.absolute.dir}/${ant.project.name}-release-unaligned.apk" />
@@ -44,16 +35,19 @@
              digestalg="SHA1"
              verbose="false"
              preservelastmodified="true">
-		</signjar>          
+    </signjar>          
+
     <zipalign-helper
             in.package="${out.unaligned.file}"
             out.package="${out.final.file}" />
     <echo level="info">Release Package: ${out.final.file}</echo>  
     <copy file="${out.final.file}" tofile="${build.dir}/${project.name}.apk" />
   </target>
-  <import file="${sdk.dir}/tools/ant/build.xml" />
 
-  <target name="view-settings">
-    <echoproperties />
+  <target name="build"
+              depends="-set-release-mode, -release-obfuscation-check, -package, -post-build"
+              description="Builds the application in release mode.">
   </target>
+
+  <import file="${working.dir}/build/android.project.xml" />
 </project>

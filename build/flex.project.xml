@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns:antcontrib="antlib:net.sf.antcontrib">
+  <import file="${working.dir}/build/flex.common.xml" />
+  
+  <property name="source.dir" location="src"/>
+  <property name="project.build.dir" location="bin"/>
+
+  <target name="clean-working-dirs" extensionOf="clean-core">
+    <delete dir="${project.build.dir}" failonerror="false"/>
+  </target>
+
+  <target name="prepare-working-dirs" extensionOf="prepare-core">
+    <mkdir dir="${project.build.dir}"/>
+  </target>
+
+  <!-- The Location of flex compilers on your Computer -->
+  <property name="flex.binaryPath" location="${FLEX_HOME}/bin"/>
+  
+  <!-- path to the flex task libraries. -->
+  <typedef resource="flexTasks.tasks">
+    <classpath>
+      <fileset dir="${FLEX_HOME}/ant/lib" includes="*.jar"/>
+    </classpath>
+  </typedef>
+  
+
+  <target name="build-core" depends="-compile"/>
+  <target name="-compile"/>
+
+
+  <target name="package-core" depends="-pre-package,-package"/>
+  <target name="-pre-package">
+  </target>
+  
+  <target name="-package" depends="-pre-package" unless="package.notRequired"/>
+
+  <import file="${working.dir}/build/build.process.xml"/>
+</project>

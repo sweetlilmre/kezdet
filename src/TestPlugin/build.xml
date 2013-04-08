@@ -2,30 +2,18 @@
 <project name="TestPlugin" default="makeDexJar" xmlns:antcontrib="antlib:net.sf.antcontrib">
   <property name="working.dir" location="../.." />
   <import file="${working.dir}/build/common.xml" />
+
   <property name="project.name" value="${ant.project.name}"/>
   <property name="target.dir" location="${build.dir}"/>
   <property name="target.name" value="${project.name}.jar"/>
 
-  <property name="sdk.dir" value="${ANDROID_HOME}"/>
 
-  <property file="ant.properties" />
-  <loadproperties srcFile="project.properties" />
-
-  <!-- quick check on sdk.dir -->
-  <fail message="sdk.dir is missing. Make sure to generate local.properties using 'android update project' or to inject it through an env var"
-        unless="sdk.dir"/>
-
-  <target name="-pre-compile">
+  <target name="-pre-compile" depends="-pre-compile-dependset">
     <augment id="project.target.class.path" path="${lib.dir}/gson-2.2.2.jar" />
   </target>
 
   <import file="custom_rules.xml" optional="true" />
-  <import file="${sdk.dir}/tools/ant/build.xml" />
 
-  <target name="build"
-              depends="-set-release-mode, -release-obfuscation-check, -package, -post-build"
-              description="Builds the application in release mode.">
-  </target>
 
   <!-- we actually want to create a dex file here even though this is a library project -->
   <target name="-post-compile">
@@ -39,6 +27,7 @@
       <path path="${out.classes.absolute.dir}"/>
     </dex>  
   </target>
+
 
   <target name="-package" depends="-dex">
     <jar destFile="${target.dir}/${target.name}"
@@ -57,4 +46,6 @@
              preservelastmodified="true">
     </signjar>
   </target>
+
+  <import file="${working.dir}/build/android.project.xml" />
 </project>

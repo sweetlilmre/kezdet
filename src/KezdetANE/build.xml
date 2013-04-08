@@ -2,39 +2,20 @@
 <project name="KezdetANE" default="default" xmlns:antcontrib="antlib:net.sf.antcontrib">
   <property name="working.dir" location="../.." />
   <import file="${working.dir}/build/common.xml" />
-  <import file="${working.dir}/build/flex.common.xml" />
+
   <property name="project.name" value="KezdetHost"/>
-  <property name="project.build.dir" location="bin"/>
   <property name="target.dir" location="${build.dir}"/>
-  <property name="target.swc.name" value="${project.name}.swc"/>
-  <property name="target.swc.path" value="${project.build.dir}/${target.swc.name}"/>
-  <property name="target.ane.name" value="${project.name}.ane"/>
-  <property name="target.ane.path" value="${target.dir}/${target.ane.name}"/>
+  <property name="target.name" value="${project.name}.swc"/>
+  <property name="target.path" value="${target.dir}/${target.name}"/>
+  <property name="package.name" value="${project.name}.ane"/>
+  <property name="package.path" value="${target.dir}/${package.name}"/>
   
-  
-  <target name="clean-working-dirs" extensionOf="clean-core">
-    <delete dir="${project.build.dir}" failonerror="false"/>
-  </target>
 
-  <target name="prepare-working-dirs" extensionOf="prepare-core">
-    <mkdir dir="${project.build.dir}"/>
-  </target>
-
-  <!-- The Location of flex compilers on your Computer -->
-  <property name="flex.binaryPath" location="${FLEX_HOME}/bin"/>
-  
-  <!-- path to the flex task libraries. -->
-  <typedef resource="flexTasks.tasks">
-    <classpath>
-      <fileset dir="${FLEX_HOME}/ant/lib" includes="*.jar"/>
-    </classpath>
-  </typedef>
-  
-  <target name="build-core">
-    <compc output="${target.swc.path}">
+  <target name="-compile">
+    <compc output="${project.build.dir}/${target.name}">
       <load-config>${FLEX_HOME}/frameworks/air-config.xml</load-config>
-      <dump-config>${log.dir}/${target.swc.name}-config.xml</dump-config>
-      <link-report>${log.dir}/${target.swc.name}.xml</link-report>
+      <dump-config>${log.dir}/${target.name}-config.xml</dump-config>
+      <link-report>${log.dir}/${target.name}.xml</link-report>
       <!-- <debug>${project.debug}</debug> -->
       <incremental>true</incremental>
       <mobile>true</mobile>
@@ -42,17 +23,17 @@
 
       <static-link-runtime-shared-libraries>true</static-link-runtime-shared-libraries>
 
-      <!-- <source-path path-element="src"/> -->
-      
       <include-sources dir="src">
         <include name="**/*.as"/>
       </include-sources>
     </compc>
-    <copy file="${target.swc.path}" tofile="${build.dir}/${target.swc.name}"/>
+
+    <copy file="${project.build.dir}/${target.name}" tofile="${target.path}"/>
   </target>
 
-  <target name="package-ane" extensionOf="after-build">
-    <unzip src="${target.swc.path}"
+  
+  <target name="-package">
+    <unzip src="${target.path}"
            dest="${project.build.dir}">
       <patternset>
         <include name="library.swf"/>
@@ -63,7 +44,7 @@
     <copy file="${project.build.dir}/library.swf" todir="${project.build.dir}/default"/>
     <copy file="${project.build.dir}/library.swf" todir="${project.build.dir}/android"/>
     
-    <echo>Packaging ${target.ane.path}</echo>
+    <echo>Packaging ${package.path}</echo>
     <propertyexists property="ane.key.store"/>
     <propertyexists property="ane.key.storepass"/>
 
@@ -81,14 +62,14 @@
       <arg line="-target ane" />
 
       <!-- target file -->
-      <arg value="${target.ane.path}" />
+      <arg value="${package.path}" />
 
       <!-- extension descriptor file -->
       <arg value="extension.xml" />
 
       <!-- wrapper swc -->
       <arg value="-swc" />
-      <arg value="${target.dir}/${target.swc.name}" />
+      <arg value="${target.dir}/${target.name}" />
 
       <arg line="-platform Android-ARM" />
       <arg line="-C ${project.build.dir}/android ." />
@@ -98,5 +79,5 @@
     </java>
   </target>
 
-  <import file="${config.dir}/build.process.xml"/>
+  <import file="${working.dir}/build/flex.project.xml"/>
 </project>

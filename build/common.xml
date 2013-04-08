@@ -8,7 +8,6 @@
 
   <!-- Set common directory properties. -->
   <property name="build.dir" location="${working.dir}/bin"/>
-  <dirname property="config.dir" file="${ant.file.common}"/>
   <property name="dist.dir" location="${working.dir}/dist" />
   <property name="log.dir" location="${working.dir}/logs"/>
   <property name="lib.dir" location="${working.dir}/lib"/>

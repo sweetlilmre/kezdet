@@ -57,9 +57,9 @@
   <target name="package" description="Packages build artifacts"
           depends="before-package,package-core,after-package">
   </target>
-  <target name="before-package"/>
+  <extension-point name="before-package"/>
   <target name="package-core"/>
-  <target name="after-package"/>
+  <extension-point name="after-package"/>
 
 
   <target name="publish" description="Packages build artifacts"

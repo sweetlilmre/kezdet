@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project name="KezdetANEExtension" default="default" xmlns:antcontrib="antlib:net.sf.antcontrib">
-  <property name="working.dir" location=".." />
+  <property name="working.dir" location="../.." />
   <import file="${working.dir}/build/common.xml" />
   <property name="project.name" value="KezdetHost"/>
   <property name="target.dir" location="${build.dir}"/>

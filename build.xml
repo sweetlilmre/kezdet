@@ -17,8 +17,8 @@
   
   <target name="clean-projects" extensionOf="clean-core">
     <subant target="clean">
-      <fileset dir="${basedir}">
-        <include name="src/*/build.xml"/>
+      <fileset dir="src">
+        <include name="*/build.xml"/>
       </fileset>
       <propertyset refid="build.properties"/>
     </subant>
@@ -64,6 +64,16 @@
   
   <target name="AirTestApp" depends="KezdetANE">
     <delegatebuild project="src/AirTestApp" target="build"/>
+  </target>
+  
+  <target name="package-core">
+    <copy todir="${dist.dir}">
+      <fileset dir="${build.dir}">
+        <include name="Kezdet*Lib.jar"/>
+        <include name="KezdetHost.swc"/>
+        <include name="KezdetHost.ane"/>
+      </fileset>
+    </copy>
   </target>
   
   <macrodef name="delegatebuild">

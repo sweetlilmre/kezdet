@@ -1,13 +1,8 @@
 package com.deviceteam.kezdet.airhost
 {
-  import flash.events.Event;
   import flash.events.EventDispatcher;
-  import flash.events.IEventDispatcher;
-  import flash.events.IOErrorEvent;
-  import flash.events.ProgressEvent;
   import flash.events.StatusEvent;
   import flash.external.ExtensionContext;
-  import flash.filesystem.File;
   import flash.utils.ByteArray;
   
   public class KezdetAIRHost extends EventDispatcher

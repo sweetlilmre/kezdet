@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns:antcontrib="antlib:net.sf.antcontrib">
+  <property name="sdk.dir" value="${ANDROID_HOME}"/>
+
+  <property file="${project.dir}/ant.properties" />
+  <loadproperties srcFile="project.properties" />
+
+  <!-- quick check on sdk.dir -->
+  <fail message="sdk.dir is missing. Make sure to generate local.properties using 'android update project' or to inject it through an env var"
+        unless="sdk.dir"/>
+
+  <target name="-pre-compile" depends="-pre-compile-dependset" />
+  <target name="-pre-compile-dependset">
+    <!-- Alternative workaround for https://code.google.com/p/android/issues/detail?id=31242 -->
+    <echo>Deleting all class files if newer sources (java or jars) are found...</echo>
+    <do-only-if-manifest-hasCode elseText="hasCode = false. Skipping...">
+      <!-- Instead of trying to get minimal incremental compilation using depend task -->
+      <!-- (which has known limitations - http://ant.apache.org/manual/Tasks/depend.html), -->
+      <!-- just delete all class files if any of the sources/jars are newer. -->
+      <!-- We may recompile when it is actually not needed, however builds with no changes -->
+      <!-- are still faster it and we don't inadvertently skip any compilation that is actually needed. --> 
+
+      <!-- The names of these properties suggest they are single directories, but -->
+      <!-- some projects with Android.mk files treat them like paths (with multiple dirs). -->
+      <!-- Massage these paths get all the files inside multiple dirs. -->
+      <path id="project.all.sources.path">
+        <pathelement path="${source.absolute.dir}"/>
+        <pathelement path="${gen.absolute.dir}"/>
+      </path>
+
+      <!-- convert project.all.sources.path to project.all.sources.list  -->
+      <pathconvert
+                refid="project.all.sources.path"
+                property="project.all.sources.list"
+                pathsep=","
+                dirsep="/">
+
+        <!-- Make the path elements relative to basedir and glob to match all files -->
+        <!-- The result will look like: "src/**,gen/**" -->
+        <chainedmapper>
+          <filtermapper>
+            <replacestring from="${basedir}/" to=""/>
+          </filtermapper>
+          <regexpmapper from="^(.*)" to="\1/**"/>
+        </chainedmapper>
+      </pathconvert>
+
+      <dependset verbose="true">
+        <sources>
+          <!-- merge the project's own classpath and the tested project's classpath -->
+          <path refid="project.all.jars.path" />
+          <path refid="tested.project.classpath" />
+          <!-- All source files -->
+          <fileset dir="${basedir}" includes="${project.all.sources.list}" />
+        </sources>
+        <targets>
+          <fileset dir="${out.classes.absolute.dir}"/>
+        </targets>
+      </dependset>
+    </do-only-if-manifest-hasCode>
+  </target>
+
+  <target name="build"
+              depends="-set-release-mode, -release-obfuscation-check, -package, -post-build"
+              description="Builds the application in release mode.">
+  </target>
+
+  <import file="${sdk.dir}/tools/ant/build.xml" />
+</project>

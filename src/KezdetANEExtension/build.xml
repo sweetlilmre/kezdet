@@ -2,23 +2,17 @@
 <project name="KezdetANEExtension" default="default" xmlns:antcontrib="antlib:net.sf.antcontrib">
   <property name="working.dir" location="../.." />
   <import file="${working.dir}/build/common.xml" />
+  <import file="${working.dir}/build/flex.common.xml" />
+
   <property name="project.name" value="KezdetHost"/>
   <property name="target.dir" location="${build.dir}"/>
   <property name="target.name" value="${project.name}.jar"/>
 
-  <import file="${working.dir}/build/flex.common.xml" />
-  <property name="sdk.dir" value="${ANDROID_HOME}"/>
-  
-  <property file="ant.properties" />
-  <loadproperties srcFile="project.properties" />
 
-  <!-- quick check on sdk.dir -->
-  <fail message="sdk.dir is missing. Make sure to generate local.properties using 'android update project' or to inject it through an env var"
-        unless="sdk.dir"/>
-
-  <target name="-pre-compile">
+  <target name="-pre-compile" depends="-pre-compile-dependset">
     <augment id="project.all.jars.path" path="${FLEX_HOME}/lib/android/FlashRuntimeExtensions.jar" />
   </target>
+
 
   <target name="-post-compile">
     <jar destfile="${target.dir}/${target.name}">
@@ -30,9 +24,5 @@
     </jar>
   </target>
 
-  <import file="${sdk.dir}/tools/ant/build.xml" />
-
-  <target name="view-settings">
-    <echoproperties />
-  </target>
+  <import file="${working.dir}/build/android.project.xml" />
 </project>

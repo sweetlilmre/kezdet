@@ -5,7 +5,6 @@
           description="Builds everything and creates distribution packages.">
   </target>
 
-
   <target name="default" depends="clean,prepare,build,test"
           description="clean and build">
   </target>

@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<project name="KezdetAirHostWrapper" default="default" xmlns:antcontrib="antlib:net.sf.antcontrib">
+  <property name="working.dir" location="../../.." />
+  <import file="${working.dir}/build/common.xml" />
+
+  <property name="project.name" value="KezdetAirHost"/>
+  <property name="project.build.dir" location="../bin"/>
+  <property name="target.dir" location="${build.dir}"/>
+  <property name="target.name" value="${project.name}.swc"/>
+  <property name="target.path" value="${target.dir}/${target.name}"/>
+  
+
+  <target name="-compile">
+    <compc output="${project.build.dir}/${target.name}">
+      <load-config>${FLEX_HOME}/frameworks/air-config.xml</load-config>
+      <dump-config>${log.dir}/${target.name}-config.xml</dump-config>
+      <link-report>${log.dir}/${target.name}.xml</link-report>
+      <!-- <debug>${project.debug}</debug> -->
+      <incremental>true</incremental>
+      <mobile>true</mobile>
+      <optimize>true</optimize>
+      <static-link-runtime-shared-libraries>true</static-link-runtime-shared-libraries>
+
+      <include-sources dir="src">
+        <include name="**/*.as"/>
+      </include-sources>
+    </compc>
+
+    <copy file="${project.build.dir}/${target.name}" tofile="${target.path}"/>
+  </target>
+
+  <import file="${working.dir}/build/flex.project.xml"/>
+</project>

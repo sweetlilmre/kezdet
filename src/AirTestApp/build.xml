@@ -27,7 +27,7 @@
       <!-- <swf-version>17</swf-version> -->
       <!-- <source-path path-element="src"/> -->
       <include-libraries dir="${build.dir}">
-         <include name="KezdetHost.swc" />
+         <include name="KezdetAirHost.swc" />
       </include-libraries>
     </mxmlc>
   </target>
@@ -35,7 +35,7 @@
 
   <target name="-package">
     <copy todir="${project.build.dir}/ane">
-      <fileset dir="${build.dir}" includes="*.ane"/>
+      <fileset dir="${build.dir}" includes="KezdetAirHost.ane"/>
     </copy>
 
     <echo>Packaging ${package.path}</echo>

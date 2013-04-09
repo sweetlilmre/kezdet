@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+<project name="KezdetAirHost" default="default" xmlns:antcontrib="antlib:net.sf.antcontrib">
+  <property name="working.dir" location="../.." />
+  <import file="${working.dir}/build/common.xml" />
+
+  <property name="project.name" value="${ant.project.name}"/>
+  <property name="project.build.dir" location="bin"/>
+  <property name="target.dir" location="${build.dir}"/>
+  <property name="package.name" value="${project.name}.ane"/>
+  <property name="package.path" value="${target.dir}/${package.name}"/>
+  
+  <target name="clean-projects" extensionOf="clean-core">
+    <subant target="clean" inheritall="false">
+      <property name="working.dir" value="${working.dir}"/>
+      <fileset dir="${basedir}" includes="*/build.xml"/>
+    </subant>
+  </target>
+
+  <target name="build-core">
+    <subant target="build" inheritall="false">
+      <property name="dont.do.deps" value="true"/>
+      <propertyset>
+        <propertyref name="working.dir"/>
+        <propertyref name="project.name"/>
+      </propertyset>
+      <fileset dir="${basedir}" includes="*/build.xml"/>
+    </subant>
+  </target>
+
+
+  <target name="package-core">
+    <unzip src="${project.build.dir}/${project.name}.swc"
+           dest="${project.build.dir}">
+      <patternset>
+        <include name="library.swf"/>
+      </patternset>
+    </unzip>
+    
+    <copy file="${project.build.dir}/${project.name}.jar" todir="${project.build.dir}/android"/>
+    <copy file="${project.build.dir}/library.swf" todir="${project.build.dir}/default"/>
+    <copy file="${project.build.dir}/library.swf" todir="${project.build.dir}/android"/>
+    
+    <echo>Packaging ${package.path}</echo>
+    <propertyexists property="ane.key.store"/>
+    <propertyexists property="ane.key.storepass"/>
+
+    <java jar="${FLEX_HOME}/lib/adt.jar" fork="true" failonerror="true">
+      <arg value="-package" />
+
+      <arg line="-tsa none" />
+      <arg line="-storetype pkcs12" />
+      <arg value="-keystore" />
+      <arg value="${ane.key.store}" />
+      <arg value="-storepass" />
+      <arg value="${ane.key.storepass}" />
+      <!-- <arg value="test" /> -->
+
+      <arg line="-target ane" />
+
+      <!-- target file -->
+      <arg value="${package.path}" />
+
+      <!-- extension descriptor file -->
+      <arg value="extension.xml" />
+
+      <!-- wrapper swc -->
+      <arg value="-swc" />
+      <arg value="${project.build.dir}/${project.name}.swc" />
+
+      <arg line="-platform Android-ARM" />
+      <arg line="-C ${project.build.dir}/android ." />
+
+      <arg line="-platform default" />
+      <arg line="-C ${project.build.dir}/default ." />
+    </java>
+  </target>
+
+  <import file="${working.dir}/build/build.process.xml"/>
+</project>

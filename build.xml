@@ -6,7 +6,7 @@
           depends="build-kezdet,build-tests">
   </target>
 
-  <target name="build-kezdet" depends="KezdetANE"/>
+  <target name="build-kezdet" depends="KezdetAirHost"/>
   <target name="build-tests" depends="TestPlugin,AirTestApp,AndroidTestApp"/>
   
   
@@ -18,12 +18,8 @@
     <delegatebuild project="src/KezdetHostLib"/>
   </target>
   
-  <target name="KezdetANEExtension" depends="KezdetHostLib">
-    <delegatebuild project="src/KezdetANEExtension"/>
-  </target>
-  
-  <target name="KezdetANE" depends="KezdetANEExtension">
-    <delegatebuild project="src/KezdetANE">
+  <target name="KezdetAirHost" depends="KezdetHostLib">
+    <delegatebuild project="src/KezdetAirHost">
       <target name="package"/>
     </delegatebuild>
   </target>
@@ -36,7 +32,7 @@
     <delegatebuild project="src/AndroidTestApp" target="release"/>
   </target>
   
-  <target name="AirTestApp" depends="KezdetANE">
+  <target name="AirTestApp" depends="KezdetAirHost">
     <delegatebuild project="src/AirTestApp">
       <target name="package"/>
     </delegatebuild>

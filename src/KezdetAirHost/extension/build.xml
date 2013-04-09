@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="KezdetAirHostExtension" default="default" xmlns:antcontrib="antlib:net.sf.antcontrib">
+  <property name="working.dir" location="../../.." />
+  <import file="${working.dir}/build/common.xml" />
+  <import file="${working.dir}/build/flex.common.xml" />
+
+  <property name="project.name" value="KezdetAirHost"/>
+  <property name="project.build.dir" location="../bin"/>
+  <property name="target.dir" location="${project.build.dir}"/>
+  <property name="target.name" value="${project.name}.jar"/>
+
+
+  <target name="-pre-compile" depends="-pre-compile-dependset">
+    <augment id="project.all.jars.path" path="${FLEX_HOME}/lib/android/FlashRuntimeExtensions.jar" />
+  </target>
+
+
+  <target name="-post-compile">
+    <jar destfile="${target.dir}/${target.name}">
+      <fileset dir="${out.classes.absolute.dir}" includes="**/*.class" />
+      <zipgroupfileset dir="${lib.dir}" includes="**/*.jar" />
+      <zipgroupfileset dir="${build.dir}">
+        <include name="Kezdet*Lib.jar"/>
+      </zipgroupfileset>
+    </jar>
+  </target>
+
+  <import file="${working.dir}/build/android.project.xml" />
+</project>

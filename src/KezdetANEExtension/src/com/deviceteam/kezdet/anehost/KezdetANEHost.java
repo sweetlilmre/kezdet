@@ -2,7 +2,6 @@ package com.deviceteam.kezdet.anehost;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 
@@ -74,12 +73,13 @@ public class KezdetANEHost implements FREExtension
   }
 
   
-  public int loadPlugin( FREContext freContext, String pluginFile, String pluginClassName ) throws FileNotFoundException, PluginLoadException, PluginVerifyException, PluginCreateException
+  public int loadPlugin( FREContext freContext, String pluginFile, String pluginClassName ) throws PluginLoadException, PluginVerifyException, PluginCreateException
   {
     FileInputStream fis = null;
+    String path = combinePath( _jarLocation,  pluginFile );
     try
     {
-      fis = new FileInputStream( combinePath( _jarLocation,  pluginFile ) );
+      fis = new FileInputStream( path );
       final FREContext ctx = freContext;
       final int id = _manager.loadPlugin( fis, pluginClassName );
       _manager.initPlugin( id, new IPluginCallback()
@@ -91,6 +91,10 @@ public class KezdetANEHost implements FREExtension
         }
       } );
       return( id );
+    }
+    catch( IOException e )
+    {
+      throw new PluginLoadException( "Unable to load plugin: " + path, e );
     }
     finally
     {

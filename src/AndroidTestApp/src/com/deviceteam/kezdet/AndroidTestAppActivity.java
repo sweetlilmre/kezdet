@@ -1,11 +1,14 @@
 package com.deviceteam.kezdet;
 
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
 import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
+import android.os.Environment;
 import android.util.Log;
 import android.widget.TextView;
 
@@ -40,7 +43,8 @@ public class AndroidTestAppActivity extends Activity
       _manager.init( context, this, AndroidTestAppActivity.class.getClassLoader(), is );
       is.close();
       
-      is = context.getAssets().open( "TestPlugin.jar" );
+      File pluginLoc = new File( Environment.getExternalStorageDirectory(), "/jar/TestPlugin.jar" );
+      is = new FileInputStream( pluginLoc );
       
       pluginId = _manager.loadPlugin( is, "com.deviceteam.kezdet.plugin.KezdetPlugin" );
       _manager.initPlugin( pluginId, new IPluginCallback()

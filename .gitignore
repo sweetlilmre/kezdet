@@ -17,6 +17,7 @@ bin/
 gen/
 logs/
 dist/
+bin-debug/
 
 # Local configuration file (sdk path, etc)
 local.properties

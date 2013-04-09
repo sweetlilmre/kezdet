@@ -37,8 +37,8 @@
     <copy todir="${dist.dir}">
       <fileset dir="${build.dir}">
         <include name="Kezdet*Lib.jar"/>
-        <include name="KezdetHost.swc"/>
-        <include name="KezdetHost.ane"/>
+        <include name="KezdetAirHost.swc"/>
+        <include name="KezdetAirHost.ane"/>
       </fileset>
     </copy>
   </target>

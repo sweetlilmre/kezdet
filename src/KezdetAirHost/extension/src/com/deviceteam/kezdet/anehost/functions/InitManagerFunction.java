@@ -35,16 +35,16 @@ public class InitManagerFunction extends BaseFunction implements FREFunction
     catch( PluginVerifyException e )
     {
       returnCode = HostResponseValues.CertificateVerifyError;
-      LogE( "certificate failed verification: " + e );
+      LogE( "certificate failed verification: ", e );
     }
     catch( IOException e )
     {
-      LogE( "certificate failed to load: " + e );
+      LogE( "certificate failed to load: ", e );
       returnCode = HostResponseValues.CertificateLoadError;
     }
     catch( Exception e )
     {
-      LogE( "initManagerFunction failed: " + e );
+      LogE( "initManagerFunction failed: ", e );
     }
     
     return( GenerateReturnObject( returnCode, 0 ) );

@@ -21,24 +21,33 @@
       <property name="dont.do.deps" value="true"/>
       <propertyset>
         <propertyref name="working.dir"/>
-        <propertyref name="project.name"/>
       </propertyset>
-      <fileset dir="${basedir}" includes="*/build.xml"/>
+      <fileset dir="${basedir}">
+        <include name="*/build.xml"/>
+      </fileset>
     </subant>
   </target>
 
 
   <target name="package-core">
+    <mkdir dir="${project.build.dir}/android"/>
+    <mkdir dir="${project.build.dir}/default"/>
+    
     <unzip src="${project.build.dir}/${project.name}.swc"
-           dest="${project.build.dir}">
+           dest="${project.build.dir}/android">
       <patternset>
         <include name="library.swf"/>
       </patternset>
     </unzip>
-    
+
+    <unzip src="${project.build.dir}/wrapper-default.swc"
+           dest="${project.build.dir}/default">
+      <patternset>
+        <include name="library.swf"/>
+      </patternset>
+    </unzip>
+
     <copy file="${project.build.dir}/${project.name}.jar" todir="${project.build.dir}/android"/>
-    <copy file="${project.build.dir}/library.swf" todir="${project.build.dir}/default"/>
-    <copy file="${project.build.dir}/library.swf" todir="${project.build.dir}/android"/>
     
     <echo>Packaging ${package.path}</echo>
     <propertyexists property="ane.key.store"/>

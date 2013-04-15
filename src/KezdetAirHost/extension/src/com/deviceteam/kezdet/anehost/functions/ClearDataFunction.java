@@ -27,12 +27,12 @@ public class ClearDataFunction extends BaseFunction implements FREFunction
     }
     catch( BadPluginException e )
     {
-      LogE("plugin did not handle exception: " + e );
+      LogE("plugin did not handle exception: ", e );
       returnCode = HostResponseValues.BadPlugin;
     }
     catch( Exception e )
     {
-      LogE("failed: " + e );
+      LogE("failed: ", e );
     }
     return GenerateReturnObject( returnCode, 0 );
   }

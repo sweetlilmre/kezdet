@@ -5,6 +5,7 @@ import com.adobe.fre.FREFunction;
 import com.adobe.fre.FREObject;
 import com.deviceteam.kezdet.anehost.KezdetANEHost;
 import com.deviceteam.kezdet.anehost.utils.HostResponseValues;
+import com.deviceteam.kezdet.interfaces.exception.BadPluginException;
 
 public class InvokeFunction extends BaseFunction implements FREFunction
 {
@@ -36,16 +37,21 @@ public class InvokeFunction extends BaseFunction implements FREFunction
     catch( IndexOutOfBoundsException e)
     {
       returnCode = HostResponseValues.InvalidPluginId;
-      LogE( "called on non-existant plugin: " + e );
+      LogE( "called on non-existant plugin: ", e );
     }
     catch( NoSuchMethodException e )
     {
       returnCode = HostResponseValues.NoSuchMethod;
-      LogE( "attempt to invoke unknown method: " + e );
+      LogE( "attempt to invoke unknown method: ", e );
+    }
+    catch( BadPluginException e )
+    {
+      returnCode = HostResponseValues.BadPlugin;
+      LogE( " plugin behaved badly ", e );
     }
     catch( Exception e )
     {
-      LogE( "unknown exception " + e );
+      LogE( "unknown exception ", e );
     }
     
     return( GenerateReturnObject( returnCode, returnValue ) );

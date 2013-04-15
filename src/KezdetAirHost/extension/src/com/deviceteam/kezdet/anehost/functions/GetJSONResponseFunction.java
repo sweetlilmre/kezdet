@@ -28,21 +28,21 @@ public class GetJSONResponseFunction extends BaseFunction implements FREFunction
     catch( IndexOutOfBoundsException e )
     {
       returnCode = HostResponseValues.InvalidPluginId;
-      LogE( "invalid pluginId: " + e );
+      LogE( "invalid pluginId: ", e );
     }
     catch( UnsupportedOperationException e )
     {
-      LogE( "not supported: " + e );
+      LogE( "not supported: ", e );
       returnCode = HostResponseValues.UnsupportedOperation;
     }
     catch( BadPluginException e )
     {
-      LogE( "plugin did not handle exception: " + e );
+      LogE( "plugin did not handle exception: ", e );
       returnCode = HostResponseValues.BadPlugin;
     }
     catch( Exception e )
     {
-      LogE( "failed: " + e );
+      LogE( "failed: ", e );
     }
     return( GenerateReturnObject( returnCode, returnValue ) );
     

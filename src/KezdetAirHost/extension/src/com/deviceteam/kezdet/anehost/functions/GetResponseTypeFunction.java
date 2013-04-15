@@ -5,6 +5,7 @@ import com.adobe.fre.FREFunction;
 import com.adobe.fre.FREObject;
 import com.deviceteam.kezdet.anehost.KezdetANEHost;
 import com.deviceteam.kezdet.anehost.utils.HostResponseValues;
+import com.deviceteam.kezdet.interfaces.exception.BadPluginException;
 
 public class GetResponseTypeFunction extends BaseFunction implements FREFunction
 {
@@ -30,11 +31,16 @@ public class GetResponseTypeFunction extends BaseFunction implements FREFunction
     catch( IndexOutOfBoundsException e )
     {
       returnCode = HostResponseValues.InvalidPluginId;
-      LogE( "invalid pluginId: " + e );
+      LogE( "invalid pluginId: ", e );
+    }
+    catch( BadPluginException e )
+    {
+      returnCode = HostResponseValues.BadPlugin;
+      LogE( " plugin behaved badly ", e );
     }
     catch( Exception e )
     {
-      LogE( "failed: " + e );
+      LogE( "failed: ", e );
     }
     return( GenerateReturnObject( returnCode, returnValue ) );
   }

@@ -22,10 +22,21 @@ public class BaseFunction
     TAG = tag;
   }
   
-  public void LogE( String message )
+  public void LogE( String message, Exception e )
   {
-    String className = this.getClass().getSimpleName();
-    Log.e( TAG, className + " " + message );
+    StringBuilder sb = new StringBuilder();
+    sb.append( this.getClass().getSimpleName() ).
+       append( "\nmessage:\n" ).
+       append( message ).
+       append( "\ncause:\n" ).
+       append( e.getCause() ).
+       append( "\ntrace:\n" );
+    StackTraceElement[] stack = e.getCause() != null ? e.getCause().getStackTrace() : e.getStackTrace();
+    for ( StackTraceElement ste : stack )
+    {
+      sb.append( ste );
+    }
+    Log.e( TAG, sb.toString() );
   }
 
   FREObject GenerateReturnObject( HostResponseValues returnCode, String returnValue )

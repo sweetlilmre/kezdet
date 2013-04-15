@@ -32,21 +32,21 @@ public class LoadFunction extends BaseFunction implements FREFunction
     catch( PluginLoadException e )
     {
       returnCode = HostResponseValues.PluginLoadError;
-      LogE( "plugin load failed: " + e );
+      LogE( "plugin load failed: ", e );
     }
     catch( PluginVerifyException e )
     {
       returnCode = HostResponseValues.PluginVerificationError;
-      LogE( "verification failed: " + e );
+      LogE( "verification failed: ", e );
     }
     catch( PluginCreateException e )
     {
       returnCode = HostResponseValues.PluginCreateError;
-      LogE( "plugin creation failed: " + e );
+      LogE( "plugin creation failed: ", e );
     }
     catch( Exception e )
     {
-      LogE( "unable to load plugin: " + e );
+      LogE( "unable to load plugin: ", e );
     }
     
     return( GenerateReturnObject( returnCode, pluginId ) );

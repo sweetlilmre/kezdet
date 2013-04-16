@@ -25,11 +25,13 @@ public class InitManagerFunction extends BaseFunction implements FREFunction
     Activity activity = arg0.getActivity();
     Context context = activity.getApplicationContext();
     String jarLocation;
+    String certName;
     HostResponseValues returnCode = HostResponseValues.UnknownError;
     try
     {
-      jarLocation = arg1[0].getAsString();
-      _host.initManager( context, activity, jarLocation );
+      certName = arg1[0].getAsString();
+      jarLocation = arg1[1].getAsString();
+      _host.initManager( context, activity, certName, jarLocation );
       returnCode = HostResponseValues.OK;
     }
     catch( PluginVerifyException e )

@@ -46,14 +46,14 @@ public class KezdetANEHost implements FREExtension
     _manager.dispose();
   }
 
-  public void initManager( Context context, Activity activity, String jarLoction ) throws PluginVerifyException, IOException
+  public void initManager( Context context, Activity activity, String certName, String jarLoction ) throws PluginVerifyException, IOException
   {
     _jarLocation = jarLoction;
     ClassLoader parentClassloader = KezdetANEHost.class.getClassLoader();
     InputStream certificateStream = null;
     try
     {
-      certificateStream = context.getAssets().open( "certificates/kezdet-public-test-certificate.cer" );
+      certificateStream = context.getAssets().open( "certificates/" + certName );
       _manager.init( context, activity, parentClassloader, certificateStream );
     }
     finally

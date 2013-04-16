@@ -50,7 +50,7 @@
 
       <arg line="-storetype pkcs12" />
       <arg value="-keystore" />
-      <arg value="../${testapp.key.store}" />
+      <arg value="${testapp.key.store}" />
       <arg value="-storepass" />
       <arg value="${testapp.key.storepass}" />
 

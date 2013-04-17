@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <project name="kezdet" default="default" xmlns:antcontrib="antlib:net.sf.antcontrib">
   <property name="working.dir" location="${basedir}" />
+  <import file="${working.dir}/build/common.xml" />
 
   <target name="build-core" 
           depends="build-kezdet,build-tests">
@@ -24,15 +25,15 @@
     </delegatebuild>
   </target>
 
-  <target name="TestPlugin" depends="KezdetPluginLib">
+  <target name="TestPlugin" depends="KezdetPluginLib" unless="skip.test">
     <delegatebuild project="src/TestPlugin"/>
   </target>
   
-  <target name="AndroidTestApp" depends="KezdetHostLib">
+  <target name="AndroidTestApp" depends="KezdetHostLib" unless="skip.test">
     <delegatebuild project="src/AndroidTestApp" target="release"/>
   </target>
   
-  <target name="AirTestApp" depends="KezdetAirHost">
+  <target name="AirTestApp" depends="KezdetAirHost" unless="skip.test">
     <delegatebuild project="src/AirTestApp">
       <target name="package"/>
     </delegatebuild>

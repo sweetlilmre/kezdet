@@ -1,38 +1,45 @@
 # path to the Flex SDK
 FLEX_HOME=C:/Flex/Air3.4
 
-############################################################################################
-# Test appliction signing certificate
-############################################################################################
-
-# p12 for signing the test applications
-testapp.key.store=../cert/kezdet-test-certificate.p12
-# password for the above
-testapp.key.storepass=test
-# alias to use in the keystore
-testapp.key.alias=1
+# Prevent the test projects from being built. 
+#skip.test=1
 
 ############################################################################################
 # ANE signing certificate
 ############################################################################################
 
-# p12 for signing the ANE
-ane.key.store=../cert/kezdet-test-certificate.p12
+# p12 for signing the ANE (relative to the checkout root dir).
+# To specify an absolute path rather define ane.key.store.absolute
+#ane.key.store=certs/kezdet.ane.p12
 # password for the above
-ane.key.storepass=test
+#ane.key.storepass=test
 # alias to use in the keystore
-ane.key.alias=1
+#ane.key.alias=1
 
 
 ############################################################################################
 # plugin(s) signing certificate and public certificate
 ############################################################################################
 
-# keystore for signing plugins
-plugin.key.store=../cert/kezdet-test-certificate.p12
+# keystore for signing plugins (relative to the checkout root dir)
+# To specify an absolute path rather define plugin.key.store.absolute
+#plugin.key.store=certs/kezdet.plugin.p12
 # password for the keystore
-plugin.key.storepass=test
+#plugin.key.storepass=test
 # alias to use in the keystore
-plugin.key.alias=1
-# public certificate for verification
-plugin.key.public=../cert/kezdet-public-test-certificate.cer
+#plugin.key.alias=1
+# public certificate for verification (relative to the checkout root dir).
+# To specify an absolute path rather define plugin.key.public.absolute
+#plugin.key.public=certs/kezdet.plugin.public.cer
+
+############################################################################################
+# Test appliction signing certificate
+############################################################################################
+
+# p12 for signing the test applications (relative to the checkout root dir)
+# To specify an absolute path rather define test.key.store.absolute
+#testapp.key.store=certs/kezdet.testapp.p12
+# password for the above
+#testapp.key.storepass=test
+# alias to use in the keystore
+#testapp.key.alias=1

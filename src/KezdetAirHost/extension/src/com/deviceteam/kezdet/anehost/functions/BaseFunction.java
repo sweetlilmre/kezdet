@@ -26,9 +26,11 @@ public class BaseFunction
   {
     StringBuilder sb = new StringBuilder();
     sb.append( this.getClass().getSimpleName() ).
-       append( "\nmessage:\n" ).
+       append( "\nmessage: " ).
        append( message ).
-       append( "\ncause:\n" ).
+       append( "\nexception message: " ).
+       append( e.getMessage() ).
+       append( "\ncause: " ).
        append( e.getCause() ).
        append( "\ntrace:\n" );
     StackTraceElement[] stack = e.getCause() != null ? e.getCause().getStackTrace() : e.getStackTrace();

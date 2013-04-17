@@ -19,7 +19,7 @@ package com.deviceteam.kezdet.airhost
     //
     //----------------------------------------
     
-    public function KezdetAIRHost( jarPath : String )
+    public function KezdetAIRHost( certName : String, jarPath : String )
     {
       super();
     }

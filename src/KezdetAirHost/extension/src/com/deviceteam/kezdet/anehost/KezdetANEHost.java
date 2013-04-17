@@ -7,6 +7,7 @@ import java.io.InputStream;
 
 import android.app.Activity;
 import android.content.Context;
+import android.util.Log;
 
 import com.adobe.fre.FREContext;
 import com.adobe.fre.FREExtension;
@@ -22,6 +23,8 @@ public class KezdetANEHost implements FREExtension
   public static final String TAG = "KezdetANEHost";
   private PluginManager _manager;
   private String _jarLocation;
+  private Context _context;
+  private Boolean _inAssets = false;  
   
   public PluginManager get_pluginManager()
   {
@@ -48,7 +51,20 @@ public class KezdetANEHost implements FREExtension
 
   public void initManager( Context context, Activity activity, String certName, String jarLoction ) throws PluginVerifyException, IOException
   {
-    _jarLocation = jarLoction;
+    _context = context;
+    if( jarLoction.startsWith( "app:/" ) )
+    {
+      _inAssets = true;
+      _jarLocation = jarLoction.replace( "app:/", "" );
+    }
+    else if( jarLoction.startsWith( "file://" ) )
+    {
+      _jarLocation = jarLoction.replace( "file://", "" );
+    }
+    else
+    {
+      _jarLocation = jarLoction;
+    }
     ClassLoader parentClassloader = KezdetANEHost.class.getClassLoader();
     InputStream certificateStream = null;
     try
@@ -75,13 +91,20 @@ public class KezdetANEHost implements FREExtension
   
   public int loadPlugin( FREContext freContext, String pluginFile, String pluginClassName ) throws PluginLoadException, PluginVerifyException, PluginCreateException
   {
-    FileInputStream fis = null;
+    InputStream jarStream = null;
     String path = combinePath( _jarLocation,  pluginFile );
     try
     {
-      fis = new FileInputStream( path );
+      if( _inAssets )
+      {
+        jarStream = _context.getAssets().open( path );
+      }
+      else
+      {
+        jarStream = new FileInputStream( path );
+      }
       final FREContext ctx = freContext;
-      final int id = _manager.loadPlugin( fis, pluginClassName );
+      final int id = _manager.loadPlugin( jarStream, pluginClassName );
       _manager.initPlugin( id, new IPluginCallback()
       {
         @Override
@@ -94,15 +117,15 @@ public class KezdetANEHost implements FREExtension
     }
     catch( IOException e )
     {
-      throw new PluginLoadException( "Unable to load plugin: " + path, e );
+      throw new PluginLoadException( "Unable to load plugin: " + path + " from( " + (_inAssets ? "assets" : "file system") + " )", e );
     }
     finally
     {
-      if( fis != null )
+      if( jarStream != null )
       {
         try
         {
-          fis.close();
+          jarStream.close();
         }
         catch( IOException e )
         {

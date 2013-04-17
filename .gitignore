@@ -3,8 +3,6 @@
 *.ap_
 *.jar
 
-src/AndroidTestApp/assets/
-
 
 # files for the dex VM
 *.dex
@@ -23,5 +21,8 @@ certs/
 # Local configuration file (sdk path, etc)
 local.properties
 
-# Eclipse project files
+# Include jars in the build directory
+!build/lib/*.jar
 
+# exclude the assets dir for AndroidTestApp
+src/AndroidTestApp/assets/

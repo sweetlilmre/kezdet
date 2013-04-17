@@ -6,6 +6,7 @@
   <property name="project.name" value="${ant.project.name}"/>
   <property name="target.dir" location="${build.dir}"/>
   <property name="target.name" value="${project.name}.jar"/>
+  <property name="package.path" value="${target.dir}/${target.name}"/>
 
 
   <target name="-pre-compile" depends="-pre-compile-dependset">
@@ -30,12 +31,13 @@
 
 
   <target name="-package" depends="-dex">
-    <jar destFile="${target.dir}/${target.name}"
+    <jar destFile="${package.path}"
          basedir="${out.absolute.dir}"
          includes="classes.dex"/>
 
-    <signjar jar="${target.dir}/${target.name}"
-             keystore="${plugin.key.store}"
+    <echo>Packaging ${package.path} and signing with ${plugin.key.store.absolute} (Alias ${plugin.key.alias})</echo>
+    <signjar jar="${${package.path}}"
+             keystore="${plugin.key.store.absolute}"
              storepass="${plugin.key.storepass}"
              storetype="pkcs12"
              alias="${plugin.key.alias}"

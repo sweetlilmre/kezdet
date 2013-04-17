@@ -1,7 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <project xmlns:antcontrib="antlib:net.sf.antcontrib">
-  <import file="${working.dir}/build/common.xml" />
-
   <property name="dont.do.deps" value="true"/>
   <propertyset id="build.properties">
     <propertyref name="working.dir"/>
@@ -14,7 +12,7 @@
     <delete dir="${log.dir}" failonerror="false"/>
     <delete dir="${dist.dir}" failonerror="false"/>
   </target>
-  
+
 
   <target name="clean-projects" extensionOf="clean-core">
     <subant target="clean">
@@ -30,7 +28,80 @@
     <mkdir dir="${build.dir}"/>
     <mkdir dir="${log.dir}"/>
     <mkdir dir="${dist.dir}"/>
+    <mkdir dir="${certs.dir}"/>
   </target>
+
+
+  <target name="create-certificates" extensionOf="prepare-core"
+          depends="create-ane-certificate,create-testapp-certificate,create-plugin-certificate,extract-plugin-public-certificate">
+  </target>
+
+  <macrodef name="create-certificate">
+    <attribute name="keystore"/>
+    <attribute name="storepass"/>
+    <sequential>
+      <echo>Creating @{keystore}</echo>
+
+      <!-- create cert dir if it doesn't exist -->
+      <local name="keystore.dir"/>
+      <dirname property="keystore.dir" file="@{keystore}"/>
+      <mkdir dir="${keystore.dir}"/>
+
+      <java jar="${FLEX_HOME}/lib/adt.jar" fork="true" failonerror="true">
+        <arg value="-certificate" />
+        <arg line="-cn deviceteam -o deviceteam -c ZA" />
+        <arg line="-validityPeriod 20" />
+        <arg value="2048-RSA" />
+        <arg value="@{keystore}" />
+        <arg value="@{storepass}" />
+      </java>
+    </sequential>
+  </macrodef>
+  
+  <available property="ane.key.store.present" file="${ane.key.store.absolute}"/>
+  <target name="create-ane-certificate" unless="ane.key.store.present">
+    <create-certificate keystore="${ane.key.store.absolute}" 
+                        storepass="${ane.key.storepass}"/>
+  </target>
+
+  <available property="testapp.key.store.present" file="${testapp.key.store.absolute}"/>
+  <target name="create-testapp-certificate" unless="testapp.key.store.present">
+    <create-certificate keystore="${testapp.key.store.absolute}" 
+                        storepass="${testapp.key.storepass}"/>
+  </target>
+
+  <available property="plugin.key.store.present" file="${plugin.key.store.absolute}"/>
+  <target name="create-plugin-certificate" unless="plugin.key.store.present">
+    <create-certificate keystore="${plugin.key.store.absolute}" 
+                        storepass="${plugin.key.storepass}"/>
+  </target>
+  <available property="plugin.key.public.present" file="${plugin.key.public.absolute}" type="file"/>
+  <target name="extract-plugin-public-certificate" unless="plugin.key.public.present">
+    <echo>Extracting ${plugin.key.public.absolute} from ${plugin.key.store.absolute}.</echo>
+    <exec executable="keytool" failonerror="true">
+      <arg line="-exportcert -alias 1 -storetype pkcs12" />
+      <arg value="-keystore" />
+      <arg value="${plugin.key.store.absolute}" />
+      <arg value="-storepass" />
+      <arg value="${plugin.key.storepass}" />
+      <arg value="-file" />
+      <arg value="${plugin.key.public.absolute}" />
+    </exec>
+  </target>
+
+
+  <macrodef name="delegatebuild">
+    <attribute name="project"/>
+    <attribute name="target" default="build"/>
+    <element name="ant-settings" optional="true" implicit="true"/>
+    <sequential>
+      <ant dir="@{project}" inheritAll="false">
+        <propertyset refid="build.properties"/>
+        <target name="@{target}"/>
+        <ant-settings/>
+      </ant>
+    </sequential>
+  </macrodef>
 
 
   <target name="package-core">
@@ -39,23 +110,12 @@
         <include name="Kezdet*Lib.jar"/>
         <include name="KezdetAirHost.swc"/>
         <include name="KezdetAirHost.ane"/>
+        <include name="*.jar"/>
+        <include name="*.apk"/>
       </fileset>
     </copy>
   </target>
-  
 
-  <macrodef name="delegatebuild">
-   <attribute name="project"/>
-   <attribute name="target" default="build"/>
-   <element name="ant-settings" optional="true" implicit="true"/>
-   <sequential>
-      <ant dir="@{project}" inheritAll="false">
-        <propertyset refid="build.properties"/>
-        <target name="@{target}"/>
-        <ant-settings/>
-      </ant>
-   </sequential>
-  </macrodef>
 
   <import file="${working.dir}/build/build.process.xml" />
 </project>

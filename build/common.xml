@@ -16,7 +16,33 @@
   
   <!-- Set build directory properties. -->
   <property name="build.lib.dir" location="${build.dir}/lib"/>
-
+  
+  <!-- Certificate properties -->
+  <property name="certs.dir" location="${working.dir}/certs"/>
+  <!-- ANE Certificate Defaults -->
+  <property name="ane.key.store" value="certs/kezdet.ane.p12"/>
+  <property name="ane.key.storepass" value="test"/>
+  <property name="ane.key.alias" value="1"/>
+  
+  <!-- TestApp Certificate Defaults -->
+  <property name="testapp.key.store" value="certs/kezdet.testapp.p12"/>
+  <property name="testapp.key.storepass" value="test"/>
+  <property name="testapp.key.alias" value="1"/>
+  
+  <!-- Plugin Certificate Defaults -->
+  <property name="plugin.key.store" value="certs/kezdet.plugin.p12"/>
+  <property name="plugin.key.storepass" value="test"/>
+  <property name="plugin.key.alias" value="1"/>
+  <property name="plugin.key.public" value="certs/kezdet.plugin.cer"/>
+  
+  
+  <!-- Absolute paths to keystores -->
+  <property name="ane.key.store.absolute" location="${working.dir}/${ane.key.store}"/>
+  <property name="plugin.key.store.absolute" location="${working.dir}/${plugin.key.store}"/>
+  <property name="testapp.key.store.absolute" location="${working.dir}/${testapp.key.store}"/>
+  <property name="plugin.key.public.absolute" location="${working.dir}/${plugin.key.public}"/>
+  
+  
   <macrodef name="propertyexists">
     <attribute name="property"/>
     <sequential>

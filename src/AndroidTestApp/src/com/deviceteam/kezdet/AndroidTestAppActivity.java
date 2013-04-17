@@ -39,7 +39,7 @@ public class AndroidTestAppActivity extends Activity
     
     try
     {
-      is = context.getAssets().open( "certificates/deviceteam.kezdet.public.cer" );
+      is = context.getAssets().open( "certificates/" + getString(R.string.cert_name) );
       _manager.init( context, this, AndroidTestAppActivity.class.getClassLoader(), is );
       is.close();
       

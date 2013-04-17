@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <project name="AirTestApp" default="default" xmlns:antcontrib="antlib:net.sf.antcontrib">
-  <property name="working.dir" location=".." />
+  <property name="working.dir" location="../.." />
   <import file="${working.dir}/build/common.xml" />
   <import file="${working.dir}/build/flex.common.xml" />
   <property name="project.build.dir" location="bin"/>
@@ -14,6 +14,8 @@
   
   
   <target name="-compile">
+    <local name="plugin.key.public.filename"/>
+    <basename property="plugin.key.public.filename" file="${plugin.key.public.absolute}"/>
     <mxmlc file="${source.dir}/testANE.mxml" output="${project.build.dir}/${target.name}">
       <load-config>${FLEX_HOME}/frameworks/air-config.xml</load-config>
       <dump-config>${project.log.dir}/${target.name}-config.xml</dump-config>
@@ -29,6 +31,7 @@
       <include-libraries dir="${build.dir}">
          <include name="KezdetAirHost.swc" />
       </include-libraries>
+      <define name="NAMES::CERTNAME" value="'${plugin.key.public.filename}'" />
     </mxmlc>
   </target>
 
@@ -37,11 +40,9 @@
     <copy todir="${project.build.dir}/ane">
       <fileset dir="${build.dir}" includes="KezdetAirHost.ane"/>
     </copy>
+    <copy file="${plugin.key.public.absolute}" todir="${project.build.dir}/certificates"/>
 
-    <echo>Packaging ${package.path}</echo>
-    <propertyexists property="testapp.key.store"/>
-    <propertyexists property="testapp.key.storepass"/>
-    <copy file="${plugin.key.public}" todir="${project.build.dir}/certificates"/>
+    <echo>Packaging ${package.path} and signing with ${testapp.key.store.absolute} (Alias ${testapp.key.alias})</echo>
 
     <java jar="${FLEX_HOME}/lib/adt.jar" dir="${project.build.dir}" fork="true" failonerror="true">
       <arg value="-package" />
@@ -50,7 +51,7 @@
 
       <arg line="-storetype pkcs12" />
       <arg value="-keystore" />
-      <arg value="${testapp.key.store}" />
+      <arg value="${testapp.key.store.absolute}" />
       <arg value="-storepass" />
       <arg value="${testapp.key.storepass}" />
 

@@ -49,7 +49,7 @@ public class KezdetANEHost implements FREExtension
     _manager.dispose();
   }
 
-  public void initManager( Context context, Activity activity, String certName, String jarLoction ) throws PluginVerifyException, IOException
+  public void initManager( Context context, Activity activity, String certPath, String jarLoction ) throws PluginVerifyException, IOException
   {
     _context = context;
     if( jarLoction.startsWith( "app:/" ) )
@@ -69,7 +69,7 @@ public class KezdetANEHost implements FREExtension
     InputStream certificateStream = null;
     try
     {
-      certificateStream = context.getAssets().open( "certificates/" + certName );
+      certificateStream = context.getAssets().open( certPath );
       _manager.init( context, activity, parentClassloader, certificateStream );
     }
     finally

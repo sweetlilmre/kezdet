@@ -16,7 +16,7 @@
       
       protected function applicationCompleteHandler(event:FlexEvent): void
       {
-        _host = new KezdetAIRHost( NAMES::CERTNAME, File.documentsDirectory.nativePath + "/jar" );
+        _host = new KezdetAIRHost( "certificates/" + NAMES::CERTNAME, File.documentsDirectory.nativePath + "/jar" );
         _host.addEventListener( KezdetEvent.UPDATE, onKezdetEvent );
         
         var pluginId : int  = _host.load( "TestPlugin.jar", "com.deviceteam.kezdet.plugin.KezdetPlugin" );

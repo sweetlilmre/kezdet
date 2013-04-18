@@ -35,7 +35,7 @@ package com.deviceteam.kezdet.airhost
       dispatchEvent( new KezdetEvent( KezdetEvent.UPDATE, pluginId, event.code, event.level, false, false ) );
     }
     
-    public function KezdetAIRHost( certName : String, jarPath : String )
+    public function KezdetAIRHost( certPath : String, jarPath : String )
     {
       super();
       extContext = ExtensionContext.createExtensionContext( "com.deviceteam.kezdet.airhost", "");
@@ -46,7 +46,7 @@ package com.deviceteam.kezdet.airhost
       }
       
       extContext.addEventListener( StatusEvent.STATUS, onStatus );
-      var ret : Object = extContext.call( "initManager", certName, jarPath );
+      var ret : Object = extContext.call( "initManager", certPath, jarPath );
       if( ret == null || ret["code"] != 0 )
       {
         throw new Error( "KezdetANEHost::initManager failed", ret == null ? 0 : ret["code"] );

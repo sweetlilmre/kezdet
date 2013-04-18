@@ -36,7 +36,7 @@
          includes="classes.dex"/>
 
     <echo>Packaging ${package.path} and signing with ${plugin.key.store.absolute} (Alias ${plugin.key.alias})</echo>
-    <signjar jar="${${package.path}}"
+    <signjar jar="${package.path}"
              keystore="${plugin.key.store.absolute}"
              storepass="${plugin.key.storepass}"
              storetype="pkcs12"

@@ -4,10 +4,11 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Hashtable;
+import java.util.UUID;
 
 import android.app.Activity;
 import android.content.Context;
-import android.util.Log;
 
 import com.adobe.fre.FREContext;
 import com.adobe.fre.FREExtension;
@@ -24,7 +25,8 @@ public class KezdetANEHost implements FREExtension
   private PluginManager _manager;
   private String _jarLocation;
   private Context _context;
-  private Boolean _inAssets = false;  
+  private Boolean _inAssets = false;
+  private Hashtable< String, UUID > _fileIdMap = new Hashtable< String, UUID >(); 
   
   public PluginManager get_pluginManager()
   {
@@ -95,16 +97,25 @@ public class KezdetANEHost implements FREExtension
     String path = combinePath( _jarLocation,  pluginFile );
     try
     {
-      if( _inAssets )
+      UUID containerId = null;
+      if( !_fileIdMap.containsKey( pluginFile ) )
       {
-        jarStream = _context.getAssets().open( path );
+        if( _inAssets )
+        {
+          jarStream = _context.getAssets().open( path );
+        }
+        else
+        {
+          jarStream = new FileInputStream( path );
+        }
+        containerId = _manager.registerContainer( jarStream );
       }
       else
       {
-        jarStream = new FileInputStream( path );
+        containerId = _fileIdMap.get( pluginFile );
       }
       final FREContext ctx = freContext;
-      final int id = _manager.loadPlugin( jarStream, pluginClassName );
+      final int id = _manager.loadPlugin( containerId, pluginClassName );
       _manager.initPlugin( id, new IPluginCallback()
       {
         @Override

@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.UUID;
 
 import android.app.Activity;
 import android.content.Context;
@@ -46,7 +47,8 @@ public class AndroidTestAppActivity extends Activity
       File pluginLoc = new File( Environment.getExternalStorageDirectory(), "/jar/TestPlugin.jar" );
       is = new FileInputStream( pluginLoc );
       
-      pluginId = _manager.loadPlugin( is, "com.deviceteam.kezdet.plugin.KezdetPlugin" );
+      UUID containerId = _manager.registerContainer( is );
+      pluginId = _manager.loadPlugin( containerId, "com.deviceteam.kezdet.plugin.KezdetPlugin" );
       _manager.initPlugin( pluginId, new IPluginCallback()
       {
         @Override

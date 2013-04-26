@@ -1,10 +1,9 @@
 package com.deviceteam.kezdet.airhost
 {
-  import flash.events.EventDispatcher;
   import flash.events.StatusEvent;
   import flash.utils.ByteArray;
   
-  public class KezdetAIRHost extends EventDispatcher
+  public class KezdetAIRHost
   {
     /**
      * Cleans up the instance of the native extension.
@@ -24,7 +23,7 @@ package com.deviceteam.kezdet.airhost
       super();
     }
     
-    public function load( jarName : String, pluginClassName : String ) : int
+    public function load( jarName : String, pluginClassName : String, callback : IPluginCallback ) : int
     {
       return( -1 ); 
     }

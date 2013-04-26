@@ -6,6 +6,7 @@ import java.security.cert.CertificateException;
 import java.security.cert.CertificateFactory;
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
+import java.util.UUID;
 
 import android.app.Activity;
 import android.content.Context;
@@ -87,20 +88,24 @@ public class PluginManager
     }
   }
 
+  public UUID registerContainer( InputStream containerStream ) throws PluginLoadException, PluginVerifyException, PluginCreateException
+  {
+    return ( _loader.registerContainer( containerStream ) );
+  }
 
   /**
    * Dynamically loads a plugin from a JAR file represented by the pluginStream parameter
-   * @param pluginStream a stream representing a JAR file that contains the plugin
+   * @param containerId a stream representing a JAR file that contains the plugin
    * @param pluginClassName the name of the class in the JAR stream that implements IPlugin
    * @param callback an IPluginCallback interface used by the plugin to communicate asynchronous event information
    * @throws PluginLoadException when the plugin fails to load (IOError)
    * @throws PluginVerifyException when the plugin cannot be successfully verified against the supplied public certificate 
    * @throws PluginCreateException when the plugin has been loaded and verified but cannot be instantiated
    */
-  public int loadPlugin( InputStream pluginStream, String pluginClassName ) throws PluginLoadException, PluginVerifyException, PluginCreateException
+  public int loadPlugin( UUID containerId, String pluginClassName ) throws PluginLoadException, PluginVerifyException, PluginCreateException
   {
     int pluginId = _pluginList.size() + 1;
-    IPlugin plugin = _loader.loadPlugin( pluginStream, pluginClassName );
+    IPlugin plugin = _loader.loadPlugin( containerId, pluginClassName );
     
     KezdetInterfaceMap methodMap = new KezdetInterfaceMap();
     plugin.registerMethods( methodMap );

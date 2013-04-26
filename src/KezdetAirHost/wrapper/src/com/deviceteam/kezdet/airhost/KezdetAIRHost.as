@@ -1,20 +1,22 @@
 package com.deviceteam.kezdet.airhost
 {
-  import flash.events.EventDispatcher;
   import flash.events.StatusEvent;
   import flash.external.ExtensionContext;
   import flash.utils.ByteArray;
+  import flash.utils.Dictionary;
   
-  public class KezdetAIRHost extends EventDispatcher
+  public class KezdetAIRHost
   {
-    private var extContext:ExtensionContext;
+    private var _extContext : ExtensionContext;
+    private var _plugins : Dictionary = new Dictionary();
+
 
     /**
      * Cleans up the instance of the native extension.
      */	
     public function dispose() : void
     {
-      extContext.dispose();
+      _extContext.dispose();
     }
     
     //----------------------------------------
@@ -31,42 +33,45 @@ package com.deviceteam.kezdet.airhost
       {
          pluginId = parseInt( event.code.substr( 0, delim ) );
          event.code = event.code.substring( delim + 1 );
+         var callback : IPluginCallback = _plugins[ pluginId ] as IPluginCallback;
+         callback.handleEvent( event.code, event.level );
       }
-      dispatchEvent( new KezdetEvent( KezdetEvent.UPDATE, pluginId, event.code, event.level, false, false ) );
     }
     
     public function KezdetAIRHost( certPath : String, jarPath : String )
     {
       super();
-      extContext = ExtensionContext.createExtensionContext( "com.deviceteam.kezdet.airhost", "");
+      _extContext = ExtensionContext.createExtensionContext( "com.deviceteam.kezdet.airhost", "");
       
-      if ( !extContext )
+      if ( !_extContext )
       {
         throw new Error( "KezdetANEHost native extension is not supported on this platform." );
       }
       
-      extContext.addEventListener( StatusEvent.STATUS, onStatus );
-      var ret : Object = extContext.call( "initManager", certPath, jarPath );
+      _extContext.addEventListener( StatusEvent.STATUS, onStatus );
+      var ret : Object = _extContext.call( "initManager", certPath, jarPath );
       if( ret == null || ret["code"] != 0 )
       {
         throw new Error( "KezdetANEHost::initManager failed", ret == null ? 0 : ret["code"] );
       }
     }
     
-    public function load( jarName : String, pluginClassName : String ) : int
+    public function load( jarName : String, pluginClassName : String, callback : IPluginCallback ) : int
     {
-      var ret : Object = extContext.call( "load", jarName, pluginClassName );
+      var ret : Object = _extContext.call( "load", jarName, pluginClassName );
       if( ret == null || ret["code"] != 0 )
       {
         throw new Error( "Plugin load() failed", ret == null ? 0 : ret["code"] );
       }
+      var pluginId : int = ret["value"] as int;
+      _plugins[ pluginId ] = callback;
       
-      return( ret["value"] as int ); 
+      return( pluginId ); 
     }
     
     public function invoke( pluginId : int, methodName : String, args : String ) : String
     {
-      var ret : Object = extContext.call(  "invoke", pluginId, methodName, args );
+      var ret : Object = _extContext.call(  "invoke", pluginId, methodName, args );
       if( ret == null || ret["code"] != 0 )
       {
         throw new Error( "Plugin invoke() failed", ret == null ? 0 : ret["code"] );
@@ -77,7 +82,7 @@ package com.deviceteam.kezdet.airhost
     
     public function clearData( pluginId : int ) : void
     {
-      var ret : Object = extContext.call(  "clearData", pluginId );
+      var ret : Object = _extContext.call(  "clearData", pluginId );
       if( ret == null || ret["code"] != 0 )
       {
         throw new Error( "Plugin clearData() failed", ret == null ? 0 : ret["code"] );
@@ -86,7 +91,7 @@ package com.deviceteam.kezdet.airhost
     
     public function getResponseType( pluginId : int ) : String
     {
-      var ret : Object = extContext.call(  "getResponseType", pluginId );
+      var ret : Object = _extContext.call(  "getResponseType", pluginId );
       if( ret == null || ret["code"] != 0 )
       {
         throw new Error( "Plugin invoke() failed with code", ret == null ? 0 : ret["code"] );
@@ -97,7 +102,7 @@ package com.deviceteam.kezdet.airhost
 
     public function getJSONResponse( pluginId : int ) : String
     {
-      var ret : Object = extContext.call(  "getJSONResponse", pluginId );
+      var ret : Object = _extContext.call(  "getJSONResponse", pluginId );
       if( ret == null || ret["code"] != 0 )
       {
         throw new Error( "Plugin invoke() failed with code", ret == null ? 0 : ret["code"] );
@@ -108,7 +113,7 @@ package com.deviceteam.kezdet.airhost
 
     public function getBinaryResponse( pluginId : int ) : ByteArray
     {
-      var ret : Object = extContext.call(  "getBinaryResponse", pluginId );
+      var ret : Object = _extContext.call(  "getBinaryResponse", pluginId );
       if( ret == null || ret["code"] != 0 )
       {
         throw new Error( "Plugin invoke() failed with code", ret == null ? 0 : ret["code"] );

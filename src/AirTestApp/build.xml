@@ -20,7 +20,7 @@
       <load-config>${FLEX_HOME}/frameworks/air-config.xml</load-config>
       <dump-config>${project.log.dir}/${target.name}-config.xml</dump-config>
       <link-report>${project.log.dir}/${target.name}.xml</link-report>
-      <!-- <debug>${project.debug}</debug> -->
+      <debug>true</debug>
       <incremental>true</incremental>
       <locale>en_US</locale>
       <mobile>true</mobile>

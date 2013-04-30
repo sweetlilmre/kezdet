@@ -17,7 +17,7 @@
       <load-config>${FLEX_HOME}/frameworks/air-config.xml</load-config>
       <dump-config>${log.dir}/${target.name}-config.xml</dump-config>
       <link-report>${log.dir}/${target.name}.xml</link-report>
-      <!-- <debug>${project.debug}</debug> -->
+      <debug>false</debug>
       <incremental>true</incremental>
       <mobile>true</mobile>
       <optimize>true</optimize>

@@ -86,6 +86,7 @@ public class PluginManager
     {
       _pluginList.get( i ).get_plugin().dispose();
     }
+    _pluginList.clear();
   }
 
   public UUID registerContainer( InputStream containerStream ) throws PluginLoadException, PluginVerifyException, PluginCreateException

@@ -9,11 +9,9 @@ import com.deviceteam.kezdet.interfaces.exception.BadPluginException;
 
 public class GetResponseTypeFunction extends BaseFunction implements FREFunction
 {
-  public static final String TAG = "KezdetANEHost-GetResponseTypeFunction";
-  
   public GetResponseTypeFunction( KezdetANEHost host )
   {
-    super( host, "KezdetANEHost-GetResponseTypeFunction" );
+    super( host, "KezdetAirHost::GetResponseTypeFunction" );
   };
 
 
@@ -25,7 +23,7 @@ public class GetResponseTypeFunction extends BaseFunction implements FREFunction
     try
     {
       int pluginId = arg1[0].getAsInt();
-      returnValue = _host.get_pluginManager().getResponseType( pluginId ); 
+      returnValue = _host.getPluginManager().getResponseType( pluginId );
       returnCode = HostResponseValues.OK;
     }
     catch( IndexOutOfBoundsException e )

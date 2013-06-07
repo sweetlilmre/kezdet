@@ -48,6 +48,8 @@ public class AndroidTestAppActivity extends Activity
       is = new FileInputStream( pluginLoc );
       
       UUID containerId = _manager.registerContainer( is );
+      is.close();
+
       pluginId = _manager.loadPlugin( containerId, "com.deviceteam.kezdet.plugin.KezdetPlugin" );
       _manager.initPlugin( pluginId, new IPluginCallback()
       {
@@ -57,8 +59,7 @@ public class AndroidTestAppActivity extends Activity
           DisplayResult( message, param );
         }
       } );
-      is.close();
- 
+
       String battLevel = _manager.invokePluginMethod( pluginId, "batteryLevel", "1000000" );
       int batt = _gson.fromJson( battLevel, Integer.class );
       Log.d( TAG, "Battery Level is: " + batt );

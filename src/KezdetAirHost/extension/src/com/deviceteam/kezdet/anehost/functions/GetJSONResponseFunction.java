@@ -11,7 +11,7 @@ public class GetJSONResponseFunction extends BaseFunction implements FREFunction
 {
   public GetJSONResponseFunction(KezdetANEHost host)
   {
-    super( host, "KezdetANEHost-GetJSONResponseFunction" );
+    super( host, "KezdetAirHost::GetJSONResponseFunction" );
   }
 
   @Override
@@ -22,7 +22,7 @@ public class GetJSONResponseFunction extends BaseFunction implements FREFunction
     try
     {
       int pluginId = arg1[0].getAsInt();
-      returnValue = _host.get_pluginManager().getJSONResponse( pluginId ); 
+      returnValue = _host.getPluginManager().getJSONResponse( pluginId );
       returnCode = HostResponseValues.OK;
     }
     catch( IndexOutOfBoundsException e )

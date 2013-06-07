@@ -11,7 +11,7 @@ public class InvokeFunction extends BaseFunction implements FREFunction
 {
   public InvokeFunction( KezdetANEHost host )
   {
-    super( host, "KezdetANEHost-InvokePluginFunction" );
+    super( host, "KezdetAirHost::InvokePluginFunction" );
   }
   
   @Override
@@ -31,7 +31,7 @@ public class InvokeFunction extends BaseFunction implements FREFunction
         params = arg1[2].getAsString();
       }
 
-      returnValue = _host.get_pluginManager().invokePluginMethod( pluginId, methodName, params );
+      returnValue = _host.getPluginManager().invokePluginMethod( pluginId, methodName, params );
       returnCode = HostResponseValues.OK;
     }
     catch( IndexOutOfBoundsException e)

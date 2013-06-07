@@ -3,6 +3,17 @@
   <!-- Override properties by defining them in the local.properties file in the working copy root -->
   <property file="${working.dir}/local.properties" />
 
+  <!-- The build configuration to use. -->
+  <property name="configuration" value="debug" />
+
+  <condition property="is_debug">
+    <equals arg1="${configuration}" arg2="debug" casesensitive="false"/>
+  </condition>
+  <condition property="is_release">
+    <not><isset property="is_debug"/></not>
+  </condition>
+    
+
   <!-- Load environment variables -->
   <property environment="env"/>
 

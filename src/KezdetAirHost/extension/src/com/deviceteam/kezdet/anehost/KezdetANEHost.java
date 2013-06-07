@@ -1,71 +1,85 @@
 package com.deviceteam.kezdet.anehost;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.Hashtable;
-import java.util.UUID;
-
 import android.app.Activity;
 import android.content.Context;
-
 import com.adobe.fre.FREContext;
 import com.adobe.fre.FREExtension;
 import com.deviceteam.kezdet.exception.PluginCreateException;
 import com.deviceteam.kezdet.exception.PluginLoadException;
 import com.deviceteam.kezdet.exception.PluginVerifyException;
+import com.deviceteam.kezdet.Log;
 import com.deviceteam.kezdet.host.PluginManager;
 import com.deviceteam.kezdet.interfaces.IPluginCallback;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
 
 
 public class KezdetANEHost implements FREExtension
 {
-  public static final String TAG = "KezdetANEHost";
+  public static final String TAG = "KezdetAirHost::KezdetANEHost";
   private PluginManager _manager;
-  private String _jarLocation;
+  private String _pluginDir;
   private Context _context;
   private Boolean _inAssets = false;
-  private Hashtable< String, UUID > _fileIdMap = new Hashtable< String, UUID >(); 
-  
-  public PluginManager get_pluginManager()
+  private Map<String, UUID> _fileContainerMap = new HashMap<String, UUID>();
+
+  public KezdetANEHost()
   {
-    return( _manager );
+    // set the log level for debugging.
+    Log.setLogLevel( android.util.Log.INFO );
+    Log.verbose( TAG, "1: constructing." );
   }
+
+  public PluginManager getPluginManager()
+  {
+    return (_manager);
+  }
+
 
   @Override
   public FREContext createContext(String arg)
   {
-    return( new KezdetANEHostContext( this ) );
+    Log.verbose( TAG, "3: creating KezdetANEHostContext." );
+    return (new KezdetANEHostContext( this ));
   }
 
   @Override
   public void initialize()
   {
+    // SXD: this only gets fired on the first createExtensionContext call.
     _manager = new PluginManager();
+    Log.verbose( TAG, "2: initialized." );
   }
 
   @Override
   public void dispose()
   {
+    _fileContainerMap.clear();
     _manager.dispose();
+    Log.verbose( TAG, "disposed." );
   }
 
-  public void initManager( Context context, Activity activity, String certPath, String jarLoction ) throws PluginVerifyException, IOException
+  public void initManager(Context context, Activity activity, String certPath, String pluginDir) throws PluginVerifyException, IOException
   {
     _context = context;
-    if( jarLoction.startsWith( "app:/" ) )
+    if (pluginDir.startsWith( "app:/" ))
     {
       _inAssets = true;
-      _jarLocation = jarLoction.replace( "app:/", "" );
+      _pluginDir = pluginDir.replace( "app:/", "" );
     }
-    else if( jarLoction.startsWith( "file://" ) )
+    else if (pluginDir.startsWith( "file://" ))
     {
-      _jarLocation = jarLoction.replace( "file://", "" );
+      _pluginDir = pluginDir.replace( "file://", "" );
     }
     else
     {
-      _jarLocation = jarLoction;
+      _pluginDir = pluginDir;
     }
     ClassLoader parentClassloader = KezdetANEHost.class.getClassLoader();
     InputStream certificateStream = null;
@@ -73,75 +87,85 @@ public class KezdetANEHost implements FREExtension
     {
       certificateStream = context.getAssets().open( certPath );
       _manager.init( context, activity, parentClassloader, certificateStream );
-    }
-    finally
+      Log.verbose( TAG, "4: manager initialized." );
+    } finally
     {
-      if( certificateStream != null )
+      if (certificateStream != null)
       {
         certificateStream.close();
       }
     }
   }
-  
-  private String combinePath( String path1, String path2 )
+
+  public int loadPlugin(FREContext context, String pluginFile, String pluginClassName) throws PluginLoadException, PluginVerifyException, PluginCreateException
   {
-    File file1 = new File( path1 );
-    File file2 = new File( file1, path2 );
-    return( file2.getPath() );
+    UUID containerId;
+    if (_fileContainerMap.containsKey( pluginFile ))
+    {
+      containerId = _fileContainerMap.get( pluginFile );
+      Log.verbose( TAG, "8: Found containerId " + containerId + " for " + pluginFile );
+    }
+    else
+    {
+      String pluginPath = combinePath( _pluginDir, pluginFile );
+      containerId = loadPluginContainer( pluginPath );
+      _fileContainerMap.put( pluginFile, containerId );
+      Log.verbose( TAG, "5: Registered containerId " + containerId + " for " + pluginFile );
+    }
+
+    final FREContext ctx = context;
+    final int id = _manager.loadPlugin( containerId, pluginClassName );
+    Log.verbose( TAG, "6: loaded plugin " + pluginClassName + " - id: " + id );
+    _manager.initPlugin( id, new IPluginCallback()
+    {
+      @Override
+      public void onPluginCallback(String message, String param)
+      {
+        ctx.dispatchStatusEventAsync( Integer.toString( id ) + ":" + message, param );
+      }
+    } );
+    Log.verbose( TAG, "7: initialized plugin " + pluginClassName + " - id: " + id );
+    return (id);
   }
 
-  
-  public int loadPlugin( FREContext freContext, String pluginFile, String pluginClassName ) throws PluginLoadException, PluginVerifyException, PluginCreateException
+  private UUID loadPluginContainer(String path) throws PluginLoadException, PluginVerifyException, PluginCreateException
   {
     InputStream jarStream = null;
-    String path = combinePath( _jarLocation,  pluginFile );
     try
     {
-      UUID containerId = null;
-      if( !_fileIdMap.containsKey( pluginFile ) )
+      if (_inAssets)
       {
-        if( _inAssets )
-        {
-          jarStream = _context.getAssets().open( path );
-        }
-        else
-        {
-          jarStream = new FileInputStream( path );
-        }
-        containerId = _manager.registerContainer( jarStream );
+        jarStream = _context.getAssets().open( path );
       }
       else
       {
-        containerId = _fileIdMap.get( pluginFile );
+        jarStream = new FileInputStream( path );
       }
-      final FREContext ctx = freContext;
-      final int id = _manager.loadPlugin( containerId, pluginClassName );
-      _manager.initPlugin( id, new IPluginCallback()
-      {
-        @Override
-        public void onPluginCallback( String message, String param )
-        {
-          ctx.dispatchStatusEventAsync( Integer.toString( id ) + ":" + message, param );
-        }
-      } );
-      return( id );
-    }
-    catch( IOException e )
+
+      UUID containerId = _manager.registerContainer( jarStream );
+      return containerId;
+    } catch(IOException e)
     {
       throw new PluginLoadException( "Unable to load plugin: " + path + " from( " + (_inAssets ? "assets" : "file system") + " )", e );
-    }
-    finally
+    } finally
     {
-      if( jarStream != null )
+      if (jarStream != null)
       {
         try
         {
           jarStream.close();
-        }
-        catch( IOException e )
+        } catch(IOException e)
         {
+          // swallow exception
         }
       }
     }
+  }
+
+  private String combinePath(String path1, String path2)
+  {
+    File file1 = new File( path1 );
+    File file2 = new File( file1, path2 );
+    return (file2.getPath());
   }
 }

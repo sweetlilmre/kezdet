@@ -9,28 +9,38 @@
   <fx:Script>
 
     <![CDATA[
-      import com.deviceteam.kezdet.airhost.KezdetAIRHost;
       import com.deviceteam.kezdet.airhost.IPluginCallback;
+      import com.deviceteam.kezdet.airhost.KezdetAIRHost;
+      
       import mx.events.FlexEvent;
       
       private var _host : KezdetAIRHost;
       
       protected function applicationCompleteHandler(event:FlexEvent): void
       {
-        _host = new KezdetAIRHost( "certificates/" + NAMES::CERTNAME, File.documentsDirectory.nativePath + "/jar" );
-        
-        var pluginId : int  = _host.load( "TestPlugin.jar", "com.deviceteam.kezdet.plugin.KezdetPlugin", this );
-        var ret : String = _host.invoke( pluginId, "batteryLevel", null );
-        trace(ret);
+        loadAndInvokePlugin();
       }
       
-      
+      private function loadAndInvokePlugin() : void 
+      {
+        var certPath:String = "certificates/" + NAMES::CERTNAME; 
+        var jarDir:String = File.documentsDirectory.nativePath + "/jar";
+        _host = new KezdetAIRHost( certPath, jarDir );
+        var pluginId : int  = _host.load( "TestPlugin.jar", "com.deviceteam.kezdet.plugin.KezdetPlugin", this );
+        trace("Invoke: " + _host.invoke( pluginId, "batteryLevel", null ));
+      }
       
       public function handleEvent( message : String, param : String ) : void
       {
         trace("message: " + message + ", parameter: " + param );
         battVal.text = "" + param;
       }
+      
+      protected function button_clickHandler(event:MouseEvent):void
+      {
+        _host.dispose();
+        loadAndInvokePlugin();
+      }   
       
     ]]>
     
@@ -41,5 +51,8 @@
       <s:Label text="Battery: "/>
       <s:TextArea id="battVal"/>
     </s:HGroup>
+    <s:Button id="button" label="Reset"
+              width="400" height="100"
+              click="button_clickHandler(event)"/>
   </s:VGroup>
 </s:Application>

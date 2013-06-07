@@ -16,7 +16,7 @@ public class InitManagerFunction extends BaseFunction implements FREFunction
 {
   public InitManagerFunction( KezdetANEHost host )
   {
-    super( host, "KezdetANEHost-InitManagerFunction" );
+    super( host, "KezdetAirHost::InitManagerFunction" );
   };
 
   @Override

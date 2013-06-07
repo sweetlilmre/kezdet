@@ -36,7 +36,6 @@ import java.util.jar.Manifest;
  * @created Apr 11, 2007: 11:02:26 PM
  * @date $Date: 2007-04-12 13:31:48 +0100 (Thu, 12 Apr 2007) $ modified by
  *       $Author: scmabh $
- * @todo Put your notes here...
  */
 
 public class JarVerifier

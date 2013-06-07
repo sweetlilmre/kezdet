@@ -11,7 +11,7 @@ public class ClearDataFunction extends BaseFunction implements FREFunction
 {
   public ClearDataFunction( KezdetANEHost host )
   {
-    super( host, "KezdetANEHost-ClearDataFunction" );
+    super( host, "KezdetAirHost::ClearDataFunction" );
     _host = host;
   }
 
@@ -22,7 +22,7 @@ public class ClearDataFunction extends BaseFunction implements FREFunction
     try
     {
       int pluginId = arg1[0].getAsInt();
-      _host.get_pluginManager().clearPluginData( pluginId );
+      _host.getPluginManager().clearPluginData( pluginId );
       returnCode = HostResponseValues.OK;
     }
     catch( BadPluginException e )

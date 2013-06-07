@@ -16,6 +16,7 @@ package com.deviceteam.kezdet.airhost
      */	
     public function dispose() : void
     {
+      if (_extContext != null)
       _extContext.dispose();
     }
     
@@ -38,7 +39,7 @@ package com.deviceteam.kezdet.airhost
       }
     }
     
-    public function KezdetAIRHost( certPath : String, jarPath : String )
+    public function KezdetAIRHost( certPath : String, jarDir : String )
     {
       super();
       _extContext = ExtensionContext.createExtensionContext( "com.deviceteam.kezdet.airhost", "");
@@ -49,10 +50,10 @@ package com.deviceteam.kezdet.airhost
       }
       
       _extContext.addEventListener( StatusEvent.STATUS, onStatus );
-      var ret : Object = _extContext.call( "initManager", certPath, jarPath );
+      var ret : Object = _extContext.call( "initManager", certPath, jarDir );
       if( ret == null || ret["code"] != 0 )
       {
-        throw new Error( "KezdetANEHost::initManager failed", ret == null ? 0 : ret["code"] );
+        throw new Error( "KezdetAirHost::initManager failed", ret == null ? 0 : ret["code"] );
       }
     }
     
@@ -61,7 +62,8 @@ package com.deviceteam.kezdet.airhost
       var ret : Object = _extContext.call( "load", jarName, pluginClassName );
       if( ret == null || ret["code"] != 0 )
       {
-        throw new Error( "Plugin load() failed", ret == null ? 0 : ret["code"] );
+        var errorCode:int = ret == null ? 0 : ret["code"];
+        throw new Error( "KezdetAirHost::Plugin load() failed: " + String(errorCode),  errorCode);
       }
       var pluginId : int = ret["value"] as int;
       _plugins[ pluginId ] = callback;
@@ -74,7 +76,8 @@ package com.deviceteam.kezdet.airhost
       var ret : Object = _extContext.call(  "invoke", pluginId, methodName, args );
       if( ret == null || ret["code"] != 0 )
       {
-        throw new Error( "Plugin invoke() failed", ret == null ? 0 : ret["code"] );
+        var errorCode:int = ret == null ? 0 : ret["code"];
+        throw new Error( "KezdetAirHost::Plugin invoke() failed: " + String(errorCode),  errorCode);
       }
 
       return( ret["value"] as String );
@@ -85,7 +88,7 @@ package com.deviceteam.kezdet.airhost
       var ret : Object = _extContext.call(  "clearData", pluginId );
       if( ret == null || ret["code"] != 0 )
       {
-        throw new Error( "Plugin clearData() failed", ret == null ? 0 : ret["code"] );
+        throw new Error( "KezdetAirHost::Plugin clearData() failed", ret == null ? 0 : ret["code"] );
       }      
     }
     
@@ -94,7 +97,7 @@ package com.deviceteam.kezdet.airhost
       var ret : Object = _extContext.call(  "getResponseType", pluginId );
       if( ret == null || ret["code"] != 0 )
       {
-        throw new Error( "Plugin invoke() failed with code", ret == null ? 0 : ret["code"] );
+        throw new Error( "KezdetAirHost::Plugin invoke() failed with code", ret == null ? 0 : ret["code"] );
       }
       
       return( ret["value"] as String );      
@@ -105,7 +108,7 @@ package com.deviceteam.kezdet.airhost
       var ret : Object = _extContext.call(  "getJSONResponse", pluginId );
       if( ret == null || ret["code"] != 0 )
       {
-        throw new Error( "Plugin invoke() failed with code", ret == null ? 0 : ret["code"] );
+        throw new Error( "KezdetAirHost::Plugin invoke() failed with code", ret == null ? 0 : ret["code"] );
       }
       
       return( ret["value"] as String );       
@@ -116,7 +119,7 @@ package com.deviceteam.kezdet.airhost
       var ret : Object = _extContext.call(  "getBinaryResponse", pluginId );
       if( ret == null || ret["code"] != 0 )
       {
-        throw new Error( "Plugin invoke() failed with code", ret == null ? 0 : ret["code"] );
+        throw new Error( "KezdetAirHost::Plugin invoke() failed with code", ret == null ? 0 : ret["code"] );
       }
       
       return( ret["value"] as ByteArray );        

@@ -2,5 +2,5 @@
 <resources>
   <string name="app_name">KezdetAndroidTestApplication</string>
   <string name="title_activity_android_test_app">Kezdet Android Test Application</string>
-  <string name="cert_name">deviceteam.kezdet.public.cer</string>
+  <string name="cert_name">kezdet.plugin.cer</string>
 </resources>

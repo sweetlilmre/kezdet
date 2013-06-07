@@ -3,10 +3,9 @@ package com.deviceteam.kezdet.anehost.functions;
 
 import java.nio.ByteBuffer;
 
-import android.util.Log;
-
 import com.adobe.fre.FREByteArray;
 import com.adobe.fre.FREObject;
+import com.deviceteam.kezdet.Log;
 import com.deviceteam.kezdet.anehost.KezdetANEHost;
 import com.deviceteam.kezdet.anehost.utils.HostResponseValues;
 
@@ -38,7 +37,7 @@ public class BaseFunction
     {
       sb.append( ste );
     }
-    Log.e( TAG, sb.toString() );
+    Log.error( TAG, sb.toString() );
   }
 
   FREObject GenerateReturnObject( HostResponseValues returnCode, String returnValue )
@@ -52,7 +51,7 @@ public class BaseFunction
     }
     catch( Exception e )
     {
-      Log.e( TAG, "Error creating plugin return object: " + e );
+      Log.error( TAG, "Error creating plugin return object: " + e );
     }
     return( obj );
   }
@@ -68,7 +67,7 @@ public class BaseFunction
     }
     catch( Exception e )
     {
-      Log.e( TAG, "Error creating plugin return object: " + e );
+      Log.error( TAG, "Error creating plugin return object: " + e );
     }
     return( obj );
   }
@@ -92,7 +91,7 @@ public class BaseFunction
     }
     catch( Exception e )
     {
-      Log.e( TAG, "Error creating plugin return object: " + e );
+      Log.error( TAG, "Error creating plugin return object: " + e );
     }
     return( obj );
   }  

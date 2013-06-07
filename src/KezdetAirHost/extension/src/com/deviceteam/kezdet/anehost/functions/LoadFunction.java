@@ -14,7 +14,7 @@ public class LoadFunction extends BaseFunction implements FREFunction
 {
   public LoadFunction( KezdetANEHost loader )
   {
-    super( loader, "KezdetANEHost-LoadFunction" );
+    super( loader, "KezdetAirHost::LoadFunction" );
   }
 
   @Override

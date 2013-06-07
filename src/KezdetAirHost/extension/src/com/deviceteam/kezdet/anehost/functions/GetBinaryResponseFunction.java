@@ -11,7 +11,7 @@ public class GetBinaryResponseFunction extends BaseFunction implements FREFuncti
 {
   public GetBinaryResponseFunction( KezdetANEHost host )
   {
-    super( host, "KezdetANEHost-GetBinaryResponseFunction" );
+    super( host, "KezdetAirHost::GetBinaryResponseFunction" );
   }
 
   @Override
@@ -22,7 +22,7 @@ public class GetBinaryResponseFunction extends BaseFunction implements FREFuncti
     try
     {
       int pluginId = arg1[0].getAsInt();
-      returnValue = _host.get_pluginManager().getBinaryResponse( pluginId ); 
+      returnValue = _host.getPluginManager().getBinaryResponse( pluginId );
       returnCode = HostResponseValues.OK;
     }
     catch( IndexOutOfBoundsException e )

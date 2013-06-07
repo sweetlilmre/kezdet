@@ -4,6 +4,7 @@
 
   <property file="${project.dir}/ant.properties" />
   <loadproperties srcFile="project.properties" />
+  <property file="project.${configuration}.properties"/>
 
   <!-- quick check on sdk.dir -->
   <fail message="sdk.dir is missing. Make sure to generate local.properties using 'android update project' or to inject it through an env var"

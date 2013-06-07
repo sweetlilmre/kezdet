@@ -1,6 +1,6 @@
 package com.deviceteam.kezdet.helpers;
 
-import java.util.Hashtable;
+import java.util.HashMap;
 
 import com.deviceteam.kezdet.interfaces.IInvokeMethod;
 
@@ -9,7 +9,7 @@ import com.deviceteam.kezdet.interfaces.IInvokeMethod;
  * @author petere
  *
  */
-public class KezdetInterfaceMap extends Hashtable< String, IInvokeMethod >
+public class KezdetInterfaceMap extends HashMap< String, IInvokeMethod >
 {
 
   /**

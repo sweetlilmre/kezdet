@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
+  <component name="AntConfiguration">
+    <buildFile url="file://$PROJECT_DIR$/build.xml" />
+  </component>
   <component name="CompilerConfiguration">
     <option name="DEFAULT_COMPILER" value="Javac" />
     <resourceExtensions />
@@ -26,6 +29,9 @@
     <option name="SKIP_IMPORT_STATEMENTS" value="false" />
   </component>
   <component name="Encoding" useUTFGuessing="true" native2AsciiForPropertiesFiles="false" />
+  <component name="EntryPointsManager">
+    <entry_points version="2.0" />
+  </component>
   <component name="Palette2">
     <group name="Swing">
       <item class="com.intellij.uiDesigner.HSpacer" tooltip-text="Horizontal Spacer" icon="/com/intellij/uiDesigner/icons/hspacer.png" removable="false" auto-create-binding="false" can-attach-label="false">
@@ -165,16 +171,27 @@
   </component>
   <component name="ProjectModuleManager">
     <modules>
+      <module fileurl="file://$PROJECT_DIR$/src/KezdetAirHost/extension/KezdetAirHost.iml" filepath="$PROJECT_DIR$/src/KezdetAirHost/extension/KezdetAirHost.iml" />
       <module fileurl="file://$PROJECT_DIR$/src/KezdetHostLib/KezdetHostLib.iml" filepath="$PROJECT_DIR$/src/KezdetHostLib/KezdetHostLib.iml" />
       <module fileurl="file://$PROJECT_DIR$/src/KezdetPluginLib/KezdetPluginLib.iml" filepath="$PROJECT_DIR$/src/KezdetPluginLib/KezdetPluginLib.iml" />
+      <module fileurl="file://$PROJECT_DIR$/src/TestPlugin/TestPlugin.iml" filepath="$PROJECT_DIR$/src/TestPlugin/TestPlugin.iml" />
     </modules>
   </component>
   <component name="ProjectRootManager" version="2" languageLevel="JDK_1_6" assert-keyword="true" jdk-15="true" project-jdk-name="Android 2.2 Platform" project-jdk-type="Android SDK">
-    <output url="file://$PROJECT_DIR$/out" />
+    <output url="file://$PROJECT_DIR$/bin" />
   </component>
   <component name="VcsDirectoryMappings">
     <mapping directory="" vcs="" />
     <mapping directory="$PROJECT_DIR$" vcs="Git" />
+  </component>
+  <component name="libraryTable">
+    <library name="gson-2.2.2">
+      <CLASSES>
+        <root url="jar://$PROJECT_DIR$/lib/gson-2.2.2.jar!/" />
+      </CLASSES>
+      <JAVADOC />
+      <SOURCES />
+    </library>
   </component>
 </project>
 

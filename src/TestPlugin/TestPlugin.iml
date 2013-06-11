@@ -7,14 +7,18 @@
       </configuration>
     </facet>
   </component>
-  <component name="NewModuleRootManager" inherit-compiler-output="true">
+  <component name="NewModuleRootManager" inherit-compiler-output="false">
+    <output url="file://$MODULE_DIR$/bin/classes" />
+    <output-test url="file://$MODULE_DIR$/../../bin/test/TestPlugin" />
     <exclude-output />
     <content url="file://$MODULE_DIR$">
       <sourceFolder url="file://$MODULE_DIR$/gen" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/src" isTestSource="false" />
     </content>
-    <orderEntry type="inheritedJdk" />
+    <orderEntry type="jdk" jdkName="Android 2.2 Platform" jdkType="Android SDK" />
     <orderEntry type="sourceFolder" forTests="false" />
+    <orderEntry type="module" module-name="KezdetPluginLib" />
+    <orderEntry type="library" name="gson-2.2.2" level="project" />
   </component>
 </module>
 

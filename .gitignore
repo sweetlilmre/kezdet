@@ -18,6 +18,9 @@ dist/
 bin-debug/
 certs/
 
+# Intellij files
+*.iws
+
 # Local configuration file (sdk path, etc)
 local.properties
 

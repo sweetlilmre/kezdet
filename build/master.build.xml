@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<project xmlns:antcontrib="antlib:net.sf.antcontrib">
+<project name="master" xmlns:antcontrib="antlib:net.sf.antcontrib">
   <property name="dont.do.deps" value="true"/>
   <propertyset id="build.properties">
     <propertyref name="working.dir"/>

@@ -12,9 +12,7 @@ import java.io.*;
 import java.lang.reflect.InvocationTargetException;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 import java.util.jar.JarFile;
 
 public class PluginLoader
@@ -23,6 +21,7 @@ public class PluginLoader
   private X509Certificate _verificationCert;
   private ClassLoader _parentLoader;
   private Map<UUID, ClassLoader> _loaderMap = new HashMap<UUID, ClassLoader>();
+  private Set<File> _cachedContainers = new HashSet<File>();
 
   /**
    * PluginLoader constructor
@@ -46,21 +45,21 @@ public class PluginLoader
    */
   public UUID registerContainer(InputStream containerStream) throws PluginLoadException, PluginVerifyException, PluginCreateException
   {
-    File tempFile = null;
     try
     {
       File dexCache = new AppDataDirGuesser().guess();
-      tempFile = File.createTempFile( "Generated", ".jar", dexCache );
-      saveToFile( containerStream, tempFile );
-      Log.verbose( TAG, "Container: " + tempFile );
+      File containerCacheFile = File.createTempFile( "Generated", ".jar", dexCache );
+      saveToFile( containerStream, containerCacheFile );
+      _cachedContainers.add( containerCacheFile );
+      Log.verbose( TAG, "Container: " + containerCacheFile );
 
-      JarFile jf = new JarFile( tempFile );
+      JarFile jf = new JarFile( containerCacheFile );
       JarVerifier.verify( jf, new X509Certificate[]{_verificationCert} );
 
       // TBD: loaded reflectively to overcome platform issues
       ClassLoader cl = (ClassLoader) Class.forName( "dalvik.system.DexClassLoader" )
           .getConstructor( String.class, String.class, String.class, ClassLoader.class )
-          .newInstance( tempFile.getPath(), dexCache.getAbsolutePath(), null, _parentLoader );
+          .newInstance( containerCacheFile.getPath(), dexCache.getAbsolutePath(), null, _parentLoader );
 
       UUID key = UUID.randomUUID();
       _loaderMap.put( key, cl );
@@ -92,19 +91,7 @@ public class PluginLoader
     } catch(InstantiationException e)
     {
       throw new PluginCreateException( String.format( "Cannot instantiate ClassLoader in plugin container" ), e );
-    } finally
-    {
-      if (tempFile != null && tempFile.exists())
-      {
-        tempFile.delete();
-      }
     }
-  }
-
-  public void dispose()
-  {
-    _loaderMap.clear();
-    Log.verbose( TAG, "disposed." );
   }
 
   /**
@@ -146,6 +133,23 @@ public class PluginLoader
     {
       throw new PluginCreateException( String.format( "Cannot instantiate class %s in plugin", className ), e );
     }
+  }
+
+  public void dispose()
+  {
+    _loaderMap.clear();
+
+    Iterator<File> i = _cachedContainers.iterator();
+    while (i.hasNext())
+    {
+      File container = i.next();
+      if (container.exists())
+      {
+        container.delete();
+      }
+    }
+    _cachedContainers.clear();
+    Log.verbose( TAG, "disposed." );
   }
 
   private void saveToFile(InputStream inputStream, File destination) throws IOException

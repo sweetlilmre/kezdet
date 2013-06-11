@@ -32,7 +32,7 @@ public class KezdetANEHost implements FREExtension
   public KezdetANEHost()
   {
     // set the log level for debugging.
-    //Log.setLogLevel( android.util.Log.INFO );
+    Log.setLogLevel( android.util.Log.INFO );
     Log.verbose( TAG, "1: constructing." );
   }
 

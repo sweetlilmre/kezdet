@@ -2,7 +2,7 @@ package com.deviceteam.kezdet;
 
 public class Log
 {
-  private static int LEVEL = android.util.Log.VERBOSE;
+  private static int LEVEL = android.util.Log.INFO;
 
   public static void setLogLevel(int level)
   {

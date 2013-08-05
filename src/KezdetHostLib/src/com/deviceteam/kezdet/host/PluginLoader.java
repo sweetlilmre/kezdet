@@ -57,9 +57,12 @@ public class PluginLoader
       JarVerifier.verify( jf, new X509Certificate[]{_verificationCert} );
 
       // TBD: loaded reflectively to overcome platform issues
-      ClassLoader cl = (ClassLoader) Class.forName( "dalvik.system.DexClassLoader" )
+        String dexCachePath = containerCacheFile.getParent();
+        Log.verbose( TAG, "dexCache: " + dexCachePath);
+
+        ClassLoader cl = (ClassLoader) Class.forName( "dalvik.system.DexClassLoader" )
           .getConstructor( String.class, String.class, String.class, ClassLoader.class )
-          .newInstance( containerCacheFile.getPath(), dexCache.getAbsolutePath(), null, _parentLoader );
+          .newInstance(containerCacheFile.getPath(), dexCachePath, null, _parentLoader );
 
       UUID key = UUID.randomUUID();
       _loaderMap.put( key, cl );

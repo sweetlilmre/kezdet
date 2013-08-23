@@ -20,6 +20,8 @@ import java.io.File;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Uses heuristics to guess the application's private data directory.
@@ -77,12 +79,15 @@ public class AppDataDirGuesser
     }
 
     // Parsing toString() method: yuck. But no other way to get the path.
-    // Strip out the bit between square brackets, that's our path.
-    String result = classLoader.toString();
-    int index = result.lastIndexOf( '[' );
-    result = ( index == -1 ) ? result : result.substring( index + 1 );
-    index = result.indexOf( ']' );
-    return ( index == -1 ) ? result : result.substring( 0, index );
+    // Use regex to match across various Android versions (4.3 introduces drastic differences)
+
+    Pattern dataPathPattern = Pattern.compile(".*\\[.*(/data/app/.*apk).*\\].*", Pattern.CASE_INSENSITIVE);
+    Matcher m = dataPathPattern.matcher( classLoader.toString() );
+    if( m.matches() &&  m.groupCount() == 1 )
+    {
+      return( m.group( 1 ) );
+    }
+    return ( "" );
   }
 
   File[] guessPath( String input )

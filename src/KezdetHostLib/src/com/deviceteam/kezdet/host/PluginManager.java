@@ -178,7 +178,7 @@ public class PluginManager
     }
     try
     {
-      return (_pluginList.get( pluginId - 1 ).get_plugin().getReponseType().toString());
+      return (_pluginList.get( pluginId - 1 ).get_plugin().getResponseType().toString());
     } catch(Exception e)
     {
       throw (new BadPluginException( "Plugin failed to handle exception", e ));

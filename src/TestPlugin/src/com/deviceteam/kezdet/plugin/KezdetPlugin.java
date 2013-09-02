@@ -83,7 +83,7 @@ public class KezdetPlugin implements IPlugin
   }
 
   @Override
-  public EventDataResponseType getReponseType()
+  public EventDataResponseType getResponseType()
   {
     return( EventDataResponseType.JSON );
   }

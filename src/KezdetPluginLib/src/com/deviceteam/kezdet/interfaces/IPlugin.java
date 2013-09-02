@@ -45,7 +45,7 @@ public abstract interface IPlugin
    * Call this method to determine what type of data the plugin will supply
    * @return The plugin response data type
    */
-  EventDataResponseType getReponseType();
+  EventDataResponseType getResponseType();
   
   /**
    * Returns plugin data in a binary format. Will throw UnsupportedOperationException if the plugin does not support this format.

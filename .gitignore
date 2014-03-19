@@ -26,6 +26,7 @@ local.properties
 
 # Include jars in the build directory
 !build/lib/*.jar
+!lib/*.jar
 
 # exclude the assets dir for AndroidTestApp
 src/AndroidTestApp/assets/

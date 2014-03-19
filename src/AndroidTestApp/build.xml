@@ -15,7 +15,7 @@
   
 
   <target name="-pre-compile" depends="-pre-compile-dependset">
-    <augment id="project.all.jars.path" path="${lib.dir}/gson-2.2.2.jar" />
+    <augment id="project.all.jars.path" path="${lib.dir}/gson-2.2.4.jar" />
 
     <local name="plugin.key.public.filename"/>
     <basename property="plugin.key.public.filename" file="${plugin.key.public.absolute}"/>

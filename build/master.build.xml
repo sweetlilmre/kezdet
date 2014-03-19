@@ -57,7 +57,7 @@
       </java>
     </sequential>
   </macrodef>
-  
+
   <available property="ane.key.store.present" file="${ane.key.store.absolute}"/>
   <target name="create-ane-certificate" unless="ane.key.store.present">
     <create-certificate keystore="${ane.key.store.absolute}" 
@@ -104,7 +104,10 @@
   </macrodef>
 
 
-  <target name="package-core">
+  <target name="package-core" depends="copy-artifacts,package-sources">
+  </target>
+  
+  <target name="copy-artifacts">
     <copy todir="${dist.dir}">
       <fileset dir="${build.dir}">
         <include name="Kezdet*Lib.jar"/>
@@ -114,6 +117,18 @@
         <include name="*.apk"/>
       </fileset>
     </copy>
+  </target>
+  
+  <target name="package-sources">
+    <delete file="${dist.dir}/Kezdet-sources.jar"/>
+    <jar destfile="${dist.dir}/Kezdet-sources.jar">
+      <fileset dir="src">
+        <include name="KezdetHostLib/src/**/*.java"/>
+        <include name="KezdetPluginLib/src/**/*.java"/>
+        <include name="KezdetAirHost/extension/src/**/*.java"/>
+        <include name="KezdetAirHost/wrapper/src/**/*.as"/>
+      </fileset>
+    </jar>
   </target>
 
 

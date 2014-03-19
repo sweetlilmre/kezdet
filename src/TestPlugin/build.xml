@@ -10,7 +10,7 @@
 
 
   <target name="-pre-compile" depends="-pre-compile-dependset">
-    <augment id="project.target.class.path" path="${lib.dir}/gson-2.2.2.jar" />
+    <augment id="project.target.class.path" path="${lib.dir}/gson-2.2.4.jar" />
   </target>
 
   <import file="custom_rules.xml" optional="true" />

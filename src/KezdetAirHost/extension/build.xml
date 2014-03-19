@@ -18,7 +18,7 @@
   <target name="-post-compile">
     <jar destfile="${target.dir}/${target.name}">
       <fileset dir="${out.classes.absolute.dir}" includes="**/*.class" />
-      <zipgroupfileset dir="${lib.dir}" includes="**/*.jar" />
+      <zipgroupfileset dir="${lib.dir}" includes="gson-2.2.4.jar" />
       <zipgroupfileset dir="${build.dir}">
         <include name="Kezdet*Lib.jar"/>
       </zipgroupfileset>
